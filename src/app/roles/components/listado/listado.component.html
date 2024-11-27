@@ -1,0 +1,436 @@
+<!-- https://help.blackboard.com/es-es/Learn/Administrator/Hosting/User_Management/Roles_and_Privileges/Course_and_Organization_Roles -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Roles"></app-header>
+
+  <!-- <div *ngIf="!(this.service.items$ | async); else divRoles" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div> -->
+
+  <!--<app-loading-panel
+    [bs]="this.service.items"
+    [divListado]="divRoles"
+  ></app-loading-panel>
+  <br />-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -20px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Cliente" #input>
+    </mat-form-field>
+
+    <div style="margin-bottom: 4px;">
+      <button style="background: #2f46a3;" mat-mini-fab color="primary" (click)="openModal(template, undefined)">
+        <mat-icon style="color: #fff;" aria-label="Crear">add</mat-icon>
+      </button>
+    </div>
+
+    <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre:</span>
+          {{ valueRow.name }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Estado:</span>
+          <span class="badge badge-lg badge-dot">
+            <i [class]="valueRow.status === 1 || valueRow.status === true ? 'bg-success ' : 'bg-danger'"></i>
+            <a>
+              {{ valueRow.status === 1 || valueRow.status === true ? "Habilitado" : "Deshabilitado" }}
+            </a>
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Descripción:</span>
+          {{ valueRow.description }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="mobile-label">Acciones:</span>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" class="tight-menu">
+            <button mat-menu-item (click)="openModal(template, element)"
+              matTooltip="Editar" matTooltipPosition="after"
+              [matTooltipDisabled]="false"
+              [disabled]="false">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+          
+            <button mat-menu-item (click)="deletedItem(element)"
+              matTooltip="Eliminar" matTooltipPosition="after"
+              [matTooltipDisabled]="false"
+              [disabled]="false">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+
+            <button mat-menu-item (click)="openModalPermisos(templatePermisos, element)"
+              matTooltip="Permisos asignados a este rol" matTooltipPosition="after"
+              [matTooltipDisabled]="false" [disabled]="false">
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Permisos asignados a este rol</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de planes">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+
+  <ng-template #divRoles>
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <a
+              class="btn btn-primary btn-lg active mcard wallet"
+              role="button"
+              kunTooltip="Crear nuevo rol"
+              kunTooltipPlacement="top"
+              aria-pressed="true"
+              (click)="openModal(template, undefined)"
+              ><mat-icon>add</mat-icon></a
+            >
+          </div>
+          <div class="col">
+            <!-- <div class="form-group">
+              <input
+                type="text"
+                class="form-control form-control-placeholdericon"
+                id="search-text"
+                aria-describedby="search-text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar rol..."
+                autofocus
+              />
+            </div> -->
+            <app-filter-box
+              [isBtnVisible]="false"
+              placeholder="Buscar rol..."
+              (onKeyUp)="keyupHandler($event)"
+            ></app-filter-box>
+          </div>
+        </div>
+        <hr />
+        <div class="card shadow border-0 mb-7">
+          <div class="card-header">
+            <h5 class="mb-0">Listado</h5>
+          </div>
+          <!-- Listado de Roles -->
+          <app-mat-reusable-table
+            [tableData]="this.RolesList"
+            [tableColumns]="this.rolesTableColumns"
+            [isFilterable]="true"
+            [isPageable]="true"
+            [paginationSizes]="[2, 4, 6, 8, 10]"
+            [defaultPageSize]="8"
+            [filter]="searchText"
+            itemsPerPageLabel="Roles por página:"
+            [rowActionIcon]="'remove_shopping_cart'"
+            [BasicIcon]="true"
+            [PermisosIcon]="true"
+            (permisosAction)="openModalPermisos(templatePermisos, $event)"
+            (deleteAction)="deletedItem($event)"
+            (editAction)="openModal(template, $event)"
+          ></app-mat-reusable-table>
+          <!-- <div class="card-footer border-0 py-5">
+          <span class="text-muted text-sm"
+            >Showing 10 items out of 250 results found</span
+          >
+        </div> -->
+        </div>
+      </div>
+    </main>
+  </ng-template>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      <i class="bx bx-pie-chart-alt icon"></i>
+      {{ form.value.id !== null ? "Modificar rol" : "Adicionar nuevo rol" }}
+    </h4>
+
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="form" (ngSubmit)="SaveChages()">
+      <!-- Rol field -->
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-5 col-form-label required"
+          >Rol:</label
+        >
+        <div class="col-sm-7">
+          <input
+            type="text"
+            title="Nombre"
+            placeholder="Nombre de rol"
+            class="form-control my-2"
+            [class.is-invalid]="
+              form.controls['name'].invalid &&
+              (form.controls['name'].dirty || form.controls['name'].touched)
+            "
+            (keyup)="checkNomnbreRolAvailability($event)"
+            formControlName="name"
+          />
+        </div>
+        <app-validation-messages
+          [form]="form"
+          fieldToValidate="name"
+          msgRequired="El campo Nombre es requerido."
+          msgPattern="Valor no permitido para este campo."
+          msgMinLength="Este campo debe tener al menos 1 caracter"
+        ></app-validation-messages>
+        <!-- <div
+          *ngIf="
+            form.controls['name'].invalid &&
+            (form.controls['name'].dirty || form.controls['name'].touched)
+          "
+          class="alert"
+        >
+          <div
+            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+            role="alert"
+          >
+            <i class="bx bxs-error-circle"></i>
+            <div [innerHTML]="nombreRolFieldErrorMsg"></div>
+          </div>
+        </div> -->
+      </div>
+      <!-- Descripción field -->
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-5 col-form-label required"
+          >Descripción:</label
+        >
+        <div class="col-sm-7">
+          <textarea
+            title="Descripción"
+            placeholder="Descripción"
+            class="form-control my-2"
+            formControlName="denom"
+            [class.is-invalid]="
+              form.controls['denom'].invalid &&
+              (form.controls['denom'].dirty || form.controls['denom'].touched)
+            "
+            required
+          ></textarea>
+        </div>
+        <app-validation-messages
+          [form]="form"
+          fieldToValidate="denom"
+          msgRequired="El campo Descripción es requerido."
+          msgPattern="Valor no permitido para este campo."
+          msgMinLength="Este campo debe tener al menos 1 caracter"
+        ></app-validation-messages>
+        <!-- <div
+          *ngIf="
+            form.controls['denom'].invalid &&
+            (form.controls['denom'].dirty || form.controls['denom'].touched)
+          "
+          class="alert"
+        >
+          <div
+            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+            role="alert"
+          >
+            <i class="bx bxs-error-circle"></i>
+            <div>Descripción requerida</div>
+          </div>
+        </div> -->
+      </div>
+      <!-- Asignar permisos field -->
+      <div class="form-group row">
+        <label for="inputEmail33" class="col-sm-5 col-form-label"
+          >Asignar permisos:</label
+        >
+        <div class="col-sm-7">
+          <ng-multiselect-dropdown
+            [placeholder]="'Permisos disponibles'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            [(ngModel)]="selectedItems"
+            formControlName="permisos"
+            (onSelect)="onItemSelect($event)"
+            (onDeSelect)="onItemDeSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onItemDeSelectAll($event)"
+          >
+          </ng-multiselect-dropdown>
+        </div>
+      </div>
+
+      <br />
+      <!-- <div class="form-group row"> -->
+      <!-- Estado field -->
+      <div class="form-check">
+        <div class="col-sm-1">
+          <input
+            type="checkbox"
+            (change)="onNativeChange($event)"
+            [checked]="isChecked"
+            [(ngModel)]="isChecked"
+            class="form-check-input"
+            id="estado"
+            formControlName="estado"
+          />
+        </div>
+        <label for="inputEmail33" class="col-sm-12 form-check-label"
+          >Activo</label
+        >
+      </div>
+      <!-- </div> -->
+
+      <br />
+      <button
+        title="Salvar datos"
+        class="btn btn-primary"
+        type="submit"
+        [disabled]="form.invalid"
+      >
+        <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+        Salvar
+      </button>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #templatePermisos>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      <i class="bx bx-pie-chart-alt icon"></i>
+      <div [innerHTML]="titlePermisosModal"></div>
+    </h4>
+
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    >
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ng-container
+      *ngIf="listadoPermisosAsignadosModal.length > 0; else elseTemplate"
+    >
+      <mat-list>
+        <div mat-subheader><strong>Permisos:</strong></div>
+        <mat-divider></mat-divider>
+        <mat-list-item
+          *ngFor="
+            let item of listadoPermisosAsignadosModal
+              | paginate
+                : {
+                    itemsPerPage: 5,
+                    currentPage: pModalPermisos,
+                    id: 'pModalPermisos'
+                  }
+          "
+        >
+          <mat-icon matListItemIcon style="margin-right: 10px">label</mat-icon>
+          <div matListItemTitle>{{ item.text | titlecase }}</div>
+        </mat-list-item>
+      </mat-list>
+      <!-- <strong>Permisos</strong>:
+      <ul>
+        <li
+          *ngFor="
+            let item of listadoPermisosAsignadosModal
+              | paginate
+                : {
+                    itemsPerPage: 5,
+                    currentPage: pModalPermisos,
+                    id: 'pModalPermisos'
+                  }
+          "
+        >
+          <i class="bx bx-shield-plus icon"></i>
+          <span class="text nav-text">{{ item.text | titlecase }}</span>
+        </li>
+      </ul> -->
+      <br />
+      <div class="d-flex justify-content-center">
+        <pagination-controls
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          (pageChange)="pModalPermisos = $event"
+          id="pModalPermisos"
+        >
+        </pagination-controls>
+      </div>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <div class="row">
+        <div class="col">
+          <img
+            src="../../../../assets/images/search_no.1ddc8c4.jpg"
+            alt=""
+            width="250"
+            height="250"
+          />
+        </div>
+        <div class="col">
+          El rol <strong>{{ selectedRol.name }}</strong> no tiene asignado
+          ningún permiso
+          <!-- , para modificar este estado clic en el siguiente boton -->
+          <!-- <button
+            class="btn-primary"
+            (click)="openModal(template, selectedRol)"
+          >
+            Asignar permiso
+          </button> -->
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>

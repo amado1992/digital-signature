@@ -1,0 +1,60 @@
+<div class="container custom-container">
+
+  <div class="row custom-container">
+
+    <div class="col-md-6 m-auto car-login">
+
+      <h1 class="white-titles-middle">Nueva contraseña</h1>
+
+      <div class="container-fluid mx-0 px-0">
+        <form (ngSubmit)="onSubmit()" [formGroup]="resetPasswForm" class="row">
+          <div class="col-12 mb-3">
+            <input
+            [ngClass]="{ 'is-invalid': newPassw?.invalid && newPassw?.touched, 'is-valid': newPassw?.valid }"
+            formControlName="newPassw"
+            type="password"
+            class="form-control"
+            id="newPassw"
+            placeholder="Nueva contraseña"
+            autocomplete="off"
+            >
+            <div
+            *ngIf="newPassw?.hasError('required')"
+            class="invalid-feedback"
+            >
+              La contraseña es obligatoria.
+            </div>
+          </div>
+          <div class="col-12 mb-3">
+            <input
+            [ngClass]="{ 'is-invalid': newPassw1?.invalid && newPassw1?.touched , 'is-valid': newPassw1?.valid }"
+            formControlName="newPassw1"
+            type="password"
+            class="form-control"
+            id="newPassw1"
+            placeholder="Repetir contraseña"
+            autocomplete="off"
+            >
+            <div
+            *ngIf="newPassw1?.hasError('required')"
+            class="invalid-feedback"
+            >
+              La contraseña es obligatoria.
+            </div>
+          </div>
+          <div class="col-12 mb-3">
+            <button [disabled]="resetPasswForm.invalid || noMatchPasswords " class="btn btn-secondary">Actualizar contraseña</button>
+          </div>
+        </form>
+      </div>
+      
+
+    </div>
+  </div>
+
+</div>
+
+
+
+
+

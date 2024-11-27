@@ -1,0 +1,133 @@
+<!-- https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/ -->
+<!-- https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/ -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Reportes"></app-header>
+
+  <div class="col-md-12 text-center">
+    <form [formGroup]="myForm" class="">
+      <div class="row align-items-center">
+        <div class="col-5">
+          <!-- Tipo de Reporte Group -->
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-4 col-form-label required"
+              ><h5 class="mb-0">Tipo de Reporte:</h5></label
+            >
+            <div class="col-sm-8">
+              <ng-multiselect-dropdown
+                [placeholder]="'... Seleccione ...'"
+                [settings]="dropdownSettingsTipoReportes"
+                [data]="dropdownListTipoReportes"
+                [(ngModel)]="selectedItemTipoReportes"
+                formControlName="reporte"
+                (onSelect)="onItemSelectTipoReportes($event)"
+                (onDeSelect)="onItemDeSelectTipoReportes($event)"
+              >
+              </ng-multiselect-dropdown>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="vr"></div> -->
+        <div class="col-7" [hidden]="this.hiddenFilterDiv">
+          <!-- Clientes Group -->
+          <fieldset>
+            <legend>Filtros:</legend>
+            <div
+              class="form-group row h-100 d-flex align-items-center justify-content-center"
+            >
+              <label for="inputEmail3" class="col-sm-4 col-form-label"
+                ><h5 class="mb-0">Clientes:</h5></label
+              >
+              <div class="col-sm-7">
+                <ng-multiselect-dropdown
+                  [placeholder]="'... Seleccione ...'"
+                  [settings]="dropdownSettingsClientes"
+                  [data]="dropdownListClientes"
+                  [(ngModel)]="selectedItemCliente"
+                  [disabled]="disabledClienteDropdown"
+                  formControlName="cliente"
+                  (onSelect)="onItemSelectCliente($event)"
+                  (onDeSelect)="onItemDeSelectCliente($event)"
+                >
+                </ng-multiselect-dropdown>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </form>
+    <br />
+    <br />
+    <!-- <ngx-extended-pdf-viewer
+      [src]="pdfSrc"
+      [height]="'95%'"
+      [useBrowserLocale]="true"
+      [showHandToolButton]="true"
+    >
+    </ngx-extended-pdf-viewer> -->
+    <!-- <div *ngIf="!pdfSrc; else divReport" class="container">
+      <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <ng-template #divReport> -->
+    <div class="container">
+      <div class="row g-3 align-items-center">
+        <div id="loading" [hidden]="hiddenLoading" style="text-align: center">
+          <div class="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <p class="file-info">
+            <!-- Elaborando reporte con los datos especificados -->
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      id="report"
+      [hidden]="hiddenReport"
+      class="animate__animated animate__fadeIn animate__faster"
+    >
+      <div style="width: 100%" class="d-flex justify-content-center">
+        <h5 class="mb-0">
+          Reporte Certificados por Cliente: Cliente
+          {{ this.clientReportName | titlecase }}
+        </h5>
+      </div>
+      <div style="width: 100%" class="d-flex justify-content-end">
+        <mat-icon
+          style="vertical-align: middle"
+          kunTooltip="Exportar reporte a fichero .pdf"
+          kunTooltipPlacement="top"
+          (click)="createPdfFileFromBlob()"
+          >save_alt</mat-icon
+        >
+      </div>
+
+      <hr class="hr" />
+      <br />
+      <pdf-viewer
+        [src]="pdfSrc"
+        [render-text]="true"
+        [original-size]="true"
+        style="width: 100%; height: 550px"
+      ></pdf-viewer>
+    </div>
+    <div [hidden]="this.hiddenInfo">
+      <div class="alert alert-info" role="alert">
+        <a class="alert-link"
+          >El cliente <strong>{{ this.clientReportName }}</strong> no tiene
+          asociado ningún certificado.</a
+        >
+      </div>
+    </div>
+    <!-- </ng-template> -->
+  </div>
+
+  <br />
+</div>

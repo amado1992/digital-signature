@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<Certificados>    
+   <certificado>    
+      <id>ecf613ee-6a9a-436a-b617-4270fecf2197</id>    
+      <name>Ajay Rich</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>66b48797-35fb-4105-84ae-2943e650d8a2</id>    
+      <name>Jassa Rich</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>1f92c814-8f15-4027-a20e-8f3f34aff69f</id>
+      <name>Jassa</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>43e1c9b8-dcea-4e9b-8bef-49f06a5fa83b</id>
+      <name>Rich Jassa</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>dc05b8f0-706b-4bf3-92a2-51c042aef306</id>
+      <name>Jassa Boss</name>       
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>
+   <certificado>    
+      <id>1f92c814-8f15-4027-a20e-8f3f34aff69f</id>
+      <name>Jassa</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>43e1c9b8-dcea-4e9b-8bef-49f06a5fa83b</id>
+      <name>Rich Jassa</name>    
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+   <certificado>    
+      <id>dc05b8f0-706b-4bf3-92a2-51c042aef306</id>
+      <name>Jassa Boss</name>       
+      <denom>therichposts@gmail.com</denom>    
+   </certificado>    
+</Certificados>   

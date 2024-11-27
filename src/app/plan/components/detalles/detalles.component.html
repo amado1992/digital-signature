@@ -1,0 +1,375 @@
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Detalles de Plan "></app-header>
+
+  <br />
+  <div *ngIf="!plan; else divPlan" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+
+  <ng-template #divPlan>
+    <br />
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <a
+              class="btn btn-primary btn-lg active mcard wallet"
+              role="button"
+              aria-pressed="true"
+              (click)="regresar()"
+            >
+              <mat-icon>keyboard_backspace</mat-icon></a
+            >
+          </div>
+        </div>
+        <hr />
+        <div class="">
+          <div class="">
+            <div>
+              <div class="card shadow border-0 mb-7 row">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    <div matLine>
+                      <strong> Nombre de Plan:</strong>
+                      {{ plan.nombre | titlecase }}
+                    </div>
+                    <div matLine>
+                      <strong>Fecha de Vencimiento:</strong>
+                      {{ vencimiento | date : "mediumDate" }} 11:59 PM
+                    </div>
+                  </h5>
+                </div>
+                <div class="row">
+                  <table
+                    mat-table
+                    [dataSource]="dataSourcePlan"
+                    class="mat-elevation-z8"
+                  >
+                    <!-- Nombre Column -->
+                    <ng-container matColumnDef="nombre">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.nombre }}</td>
+                    </ng-container>
+
+                    <!-- Duración Column -->
+                    <ng-container matColumnDef="duracion">
+                      <th mat-header-cell *matHeaderCellDef>Duración</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.duracion | pluralSingular : "mes" : "meses" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Límite de Firmas Column -->
+                    <ng-container matColumnDef="limiteFirmas">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Límite de Firmas
+                      </th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.cantidadFirmas }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="inicio">
+                      <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.inicio | date : "dd/MM/yyyy" : "" : "en" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="costo">
+                      <th mat-header-cell *matHeaderCellDef>Costo</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.costo | currency }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Estado Column -->
+                    <ng-container matColumnDef="estado">
+                      <th mat-header-cell *matHeaderCellDef>Estado</th>
+                      <td mat-cell *matCellDef="let plan">
+                        <span class="badge badge-lg badge-dot">
+                          <i
+                            [class]="
+                              plan.estado === true ? 'bg-success ' : 'bg-danger'
+                            "
+                          ></i>
+                          <a>
+                            {{ plan.estado ? "Habilitado" : "Deshabilitado" }}
+                          </a>
+                        </span>
+                      </td>
+                    </ng-container>
+
+                    <!-- Aplica Cliente Api Column -->
+                    <ng-container matColumnDef="clienteApi">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Aplica Cliente API
+                      </th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.tipoPlan ? "Si" : "No" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Tipo Plan Column -->
+                    <ng-container matColumnDef="tipoPlanNatural">
+                      <th mat-header-cell *matHeaderCellDef>Tipo de Plan</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{
+                          plan.tipoPlanNatural === true ? "Natural" : "Jurídico"
+                        }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="pago">
+                      <th mat-header-cell *matHeaderCellDef>Pago</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.pago }}</td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="moneda">
+                      <th mat-header-cell *matHeaderCellDef>Moneda</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.moneda }}</td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="limite">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Límite de certificados
+                      </th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.limite }}</td>
+                    </ng-container>
+
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="displayedColumnsPlan"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: displayedColumnsPlan"
+                    ></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="plan.clients != undefined;">
+              <ng-container
+                class="col-lg-7 container"
+                *ngIf="plan.clients.length > 0; else divClientes"
+              >
+                <br />
+                <div class="card shadow border-0 mb-7 row">
+                  <div class="card-header">
+                    <h5 class="mb-0">
+                      <div matLine>
+                        <strong> Listado de Clientes</strong>
+                      </div>
+                      <br />
+                    </h5>
+
+                    <!-- Panel de búsqueda -->
+                    <div class="row">
+                      <input
+                        type="text"
+                        class="form-control form-control-placeholdericon"
+                        id="search-text"
+                        aria-describedby="search-text"
+                        (keyup)="applyFilter($event)"
+                        placeholder="Buscar plan..."
+                        autofocus
+                        #input
+                      />
+                    </div>
+                    <br />
+                    <!-- Panel de mat-table -->
+                    <div class="row">
+                      <mat-table
+                        #table
+                        [dataSource]="dataSource"
+                        matSort
+                        class="mat-elevation-z8"
+                      >
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.name }} {{ element.lastName }}
+                          </td>
+                        </ng-container>
+                        <!-- Email Column -->
+                        <ng-container matColumnDef="mail">
+                          <th mat-header-cell *matHeaderCellDef>Correo</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.contactemail }}
+                          </td>
+                        </ng-container>
+                        <!-- Usuario Column -->
+                        <ng-container matColumnDef="user">
+                          <th mat-header-cell *matHeaderCellDef>Usuario</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{
+                              element.daoUser === null
+                                ? "Sin Asociar"
+                                : element.daoUser
+                            }}
+                          </td>
+                        </ng-container>
+                        <!-- Phone Column -->
+                        <ng-container matColumnDef="phone">
+                          <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.contactphone }}
+                          </td>
+                        </ng-container>
+                        <!-- Institucional Column -->
+                        <ng-container matColumnDef="inst">
+                          <th mat-header-cell *matHeaderCellDef>
+                            Instuticional
+                          </th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.institutional === true ? "Si" : "No" }}
+                          </td>
+                        </ng-container>
+                        <!-- Pais Column -->
+                        <ng-container matColumnDef="country">
+                          <th mat-header-cell *matHeaderCellDef>País</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.country }}
+                          </td>
+                        </ng-container>
+                        <!-- Provincia Column -->
+                        <ng-container matColumnDef="prov">
+                          <th mat-header-cell *matHeaderCellDef>Provincia</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.province }}
+                          </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="expand">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header>
+                            <!-- Certificados -->
+                          </mat-header-cell>
+                          <th
+                            mat-header-cell
+                            *matHeaderCellDef
+                            aria-label="row actions"
+                          >
+                            &nbsp;
+                          </th>
+                          <td mat-cell *matCellDef="let element">
+                            <button
+                              mat-icon-button
+                              aria-label="expand row"
+                              (click)="
+                                expandedElement =
+                                  expandedElement === element ? null : element
+                              "
+                            >
+                              <mat-icon *ngIf="expandedElement !== element"
+                                >keyboard_arrow_down</mat-icon
+                              >
+                              <mat-icon *ngIf="expandedElement === element"
+                                >keyboard_arrow_up</mat-icon
+                              >
+                            </button>
+                          </td>
+                        </ng-container>
+
+                        <mat-header-row
+                          *matHeaderRowDef="displayedColumns"
+                        ></mat-header-row>
+                        <mat-row
+                          *matRowDef="let row; columns: displayedColumns"
+                          matRipple
+                          class="element-row"
+                          [cdkDetailRow]="row"
+                          [cdkDetailRowTpl]="tpl"
+                        >
+                        </mat-row>
+                        <!-- Row shown when there is no matching data. -->
+                        <tr class="mat-row" *matNoDataRow>
+                          <td class="mat-cell" colspan="4">
+                            No se encontraron datos para el filtro "{{
+                              input.value
+                            }}"
+                          </td>
+                        </tr>
+                      </mat-table>
+                      <br />
+                      <br />
+                      <mat-paginator
+                        #paginator
+                        [pageSizeOptions]="[3, 5, 10, 25, 100]"
+                      ></mat-paginator>
+
+                      <ng-template #tpl let-element>
+                        <div
+                          class="mat-row detail-row"
+                          [@detailExpand]
+                          style="overflow: hidden"
+                        >
+                          <mat-list>
+                            <div mat-subheader>
+                              <strong style="margin-left: -16px;">Certificados asociados a este cliente:</strong>
+                            </div>
+                            <div>
+                              <button type="button" [class.spinner]="hiddenLoading" class="btn btn-primary file-upload-button" id="fileUploadButton" kunTooltip="Importar certificados" kunTooltipPlacement="right" (click)="importCertificates()" [disabled]="hiddenLoading">
+                                Importar certificados
+                                <input type="file" #fileInput [multiple]="(associatePlan != undefined && associatePlan.tipoPlanNatural) ? false : true "(change)="onFileSelect(fileInput, element.id)" />
+                              </button>
+                            </div>
+                            <mat-divider></mat-divider>
+                            
+                            <mat-list-item
+                              *ngFor="let hero of element.certificates"
+                            >
+                              <mat-icon matListIcon>label</mat-icon>
+                              <div matLine>
+                                <strong> Nombre:</strong>
+                                {{ hero.descriptive_name | titlecase }}
+                              </div>
+                              <div matLine>
+                                <strong> Certificado Id: </strong>
+                                {{ hero.certificate_id }}
+                              </div>
+                            </mat-list-item>
+                          </mat-list>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-template #divClientes>
+                <br />
+                <div id="loading" style="text-align: center">
+                  <img
+                    src="../../../../assets/images/search_no.1ddc8c4.jpg"
+                    alt=""
+                    width="250px"
+                    height="250px"
+                  />
+                  <p class="file-info">
+                    <br />
+                    El plan <strong>{{ plan.nombre }}</strong> no tiene asociado
+                    ningún cliente.
+                  </p>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </ng-template>
+  <br />
+</div>

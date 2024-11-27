@@ -1,0 +1,13 @@
+@import '../../../theme/colors.scss';
+
+.custom-container {
+  height: 100%;
+}
+
+.car-login {
+  border-radius: 5px;
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.19);
+  padding: 5%;
+  background: linear-gradient(135deg, $primary, lighten($color: $primary, $amount: 20));
+  height: max-content;
+}

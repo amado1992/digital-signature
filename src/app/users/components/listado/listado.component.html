@@ -1,0 +1,395 @@
+<!-- https://getbootstrap.com/docs/4.0/components/forms/? -->
+
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Usuarios"></app-header>
+
+  <!--<app-loading-panel [array]="UsuariosList" [divListado]="divApiUsuarios"></app-loading-panel>-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -20px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Jhon" #input>
+    </mat-form-field>
+
+    <div style="margin-bottom: 4px;">
+      <button style="background: #2f46a3;" mat-mini-fab color="primary" (click)="openModalUserDialog(null)">
+        <mat-icon style="color: #fff;" aria-label="Crear">add</mat-icon>
+      </button>
+    </div>
+
+    <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre de usuario</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre de usuario:</span>
+          {{valueRow.username}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Correo electrónico</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Corre electrónico:</span>
+          {{valueRow.email}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="inuse">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Estado:</span>
+          <span class="badge badge-lg badge-dot">
+            <i [class]="valueRow.inuse === 1 || valueRow.inuse === true ? 'bg-success ' : 'bg-danger'"></i>
+            <a>
+              {{valueRow.inuse === 1 || valueRow.inuse === true ? "Habilitado" : "Deshabilitado"}}
+            </a>
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="clienteName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Cliente asociado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Cliente asociado:</span>
+          {{valueRow.clienteName != null ? valueRow.clienteName : "-"}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="userRole">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Rol</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Rol:</span>
+          {{roles(valueRow.userRole) != "" ? roles(valueRow.userRole) : "-"}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Acciones:</span>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" class="tight-menu">
+            <button mat-menu-item (click)="openModalUserDialog(valueRow)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            
+            <button mat-menu-item (click)="deletedItem(valueRow)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de usarios">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+  <!--<br />-->
+  <!--<div class="row">
+        <div class="col">
+          <a class="btn btn-primary btn-lg active mcard wallet" (click)="openModalUserDialog(null)" role="button"
+            kunTooltip="Crear nuevo usuario" kunTooltipPlacement="top" aria-pressed="true"><mat-icon>add</mat-icon></a>
+        </div>
+        <div class="col">
+          <app-filter-box [isBtnVisible]="false" placeholder="Buscar usuario..."
+            (onKeyUp)="keyupHandler($event)"></app-filter-box>
+        </div>
+      </div>
+      <hr />-->
+
+  <!-- Listado de Usuarios -->
+  <!--<app-mat-reusable-table [tableData]="this.UsuariosList" [tableColumns]="this.usuariosTableColumns"
+          [isFilterable]="true" [isPageable]="true" [paginationSizes]="[2, 4, 6, 8, 10]" [defaultPageSize]="8"
+          [filter]="searchText" itemsPerPageLabel="Clientes API por página:" [rowActionIcon]="'remove_shopping_cart'"
+          [BasicIcon]="true" [PermisosIcon]="true" (deleteAction)="deletedItem($event)"
+          (editAction)="openModal(template, $event)"
+          (permisosAction)="openModalPermisos(templatePermisos, $event)"></app-mat-reusable-table>-->
+
+  <!--<app-mat-reusable-table [tableData]="this.UsuariosList" [tableColumns]="this.usuariosTableColumns"
+              [isFilterable]="true" [isPageable]="true" [paginationSizes]="[2, 4, 6, 8, 10]" [defaultPageSize]="8"
+              [filter]="searchText" itemsPerPageLabel="Clientes API por página:"
+              [rowActionIcon]="'remove_shopping_cart'" [BasicIcon]="true" [PermisosIcon]="true"
+              (deleteAction)="deletedItem($event)" (editAction)="openModalUserDialog($event)"
+              (permisosAction)="openModalPermisos(templatePermisos, $event)"></app-mat-reusable-table>-->
+
+  <!--<div class="clearfix" [@routerTransition]>-->
+  <!--</ng-template>-->
+  <!--</ng-template>-->
+
+  <!-- <div
+    *ngIf="errorResponse; else divApiUsuarios"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <h6>Ha ocurrido el siguiente error: {{ errorResponse.message }}</h6>
+  </div> -->
+
+  <!-- <div *ngIf="!UsuariosList | json">
+    <mat-spinner class="spinner"></mat-spinner>
+  </div> -->
+
+  <ng-template #template>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        <i class="bx bx-user-check"></i>
+        {{
+        form.value.id !== null
+        ? "Modificar usuario"
+        : "Adicionar nuevo usuario"
+        }}
+      </h4>
+
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form" (ngSubmit)="SaveChages()">
+        <!-- Usuario -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required">Usuario:</label>
+          <div class="col-sm-7">
+            <input type="text" title="Nombre" placeholder="Nombre de usuario" class="form-control my-2"
+              formControlName="name" [class.is-invalid]="
+                form.controls['name'].invalid &&
+                (form.controls['name'].dirty || form.controls['name'].touched)
+              " (keyup)="checkUserAvailability($event)" value="potlitel" />
+          </div>
+          <app-validation-messages [form]="form" fieldToValidate="name" msgRequired="El campo Nombre es requerido."
+            msgPattern="Valor no permitido para este campo."
+            [msgIncorrect]="this.nameFieldErrorMsg"></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['name'].invalid &&
+              (form.controls['name'].dirty || form.controls['name'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div [innerHTML]="nameFieldErrorMsg"></div>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- Asignar cliente -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-5 col-form-label required">Asignar cliente:</label>
+          <div class="col-sm-7">
+            <ng-multiselect-dropdown [placeholder]="'... Seleccione ...'" [settings]="dropdownSettingsClientes"
+              [data]="dropdownListClientes" [(ngModel)]="selectedItemCliente" formControlName="cliente"
+              [class.is-invalid]="
+                form.controls['cliente'].invalid &&
+                (form.controls['cliente'].dirty ||
+                  form.controls['cliente'].touched)
+              " (onSelect)="onItemSelectCliente($event)" (onDeSelect)="onItemDeSelectCliente($event)">
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required">Correo Electrónico</label>
+          <div class="col-sm-7">
+            <input type="text" title="Email" placeholder="Correo Electrónico" class="form-control my-2"
+              formControlName="email" value="potlitel@gmail.com" required />
+          </div>
+          <div *ngIf="
+              form.controls['email'].invalid &&
+              (form.controls['email'].dirty || form.controls['email'].touched)
+            " class="alert">
+            <div class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert">
+              <i class="bx bxs-error-circle"></i>
+              <div>Email requerido</div>
+            </div>
+          </div>
+        </div>
+        <!-- Password -->
+        <div class="form-group row">
+          <label for="inputPassword3" class="col-sm-5 col-form-label required">Contraseña:</label>
+          <div class="col-sm-7">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="Contraseña"
+              formControlName="password" [class.is-invalid]="
+                form.controls['password'].invalid &&
+                (form.controls['password'].dirty ||
+                  form.controls['password'].touched)
+              " value="zaqWE*123" />
+            <div class="col">
+              <app-password-strength [passwordToCheck]="form.value.password"></app-password-strength>
+            </div>
+          </div>
+          <app-validation-messages [form]="form" fieldToValidate="password"
+            msgRequired="El campo Contraseña es requerido."></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['password'].invalid &&
+              (form.controls['password'].dirty ||
+                form.controls['password'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Contraseña requerido</div>
+            </div>
+          </div> -->
+        </div>
+        <!--Confirmar  Password -->
+        <div class="form-group row">
+          <label for="inputPassword3" class="col-sm-5 col-form-label required">Confirmar Contraseña</label>
+          <div class="col-sm-7">
+            <input type="password" class="form-control" id="confirmPassword" placeholder="Cofirmar contraseña"
+              formControlName="confirmPassword" value="zaqWE*123" [class.is-invalid]="
+                form.controls['confirmPassword'].invalid &&
+                (form.controls['confirmPassword'].dirty ||
+                  form.controls['confirmPassword'].touched)
+              " />
+          </div>
+          <div *ngIf="
+              form.controls['confirmPassword'].invalid &&
+              (form.controls['confirmPassword'].dirty ||
+                form.controls['confirmPassword'].touched)
+            " class="alert">
+            <div class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert">
+              <i class="bx bxs-error-circle"></i>
+              <div>Confirmar Contraseña requerido</div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <!-- Asignar roles -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-5 col-form-label standard">Asignar roles:</label>
+          <div class="col-sm-7">
+            <ng-multiselect-dropdown [placeholder]="'... Seleccione ...'" [settings]="dropdownSettings"
+              [data]="dropdownList" [(ngModel)]="selectedItems" formControlName="roles"
+              (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"
+              (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onItemDeSelectAll($event)">
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+        <br />
+
+        <br />
+        <button title="Salvar datos" class="btn btn-primary" type="submit" [disabled]="form.invalid">
+          <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+          Salvar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+</div>
+
+<ng-template #templatePermisos>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">
+      <i class="bx bx-user-check icon"></i>
+      <div [innerHTML]="titlePermisosModal"></div>
+    </h4>
+
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ng-container *ngIf="listadoPermisosAsignadosModal.length > 0; else elseTemplate">
+      <!-- <strong>Roles</strong>:
+      <ul>
+        <li
+          *ngFor="
+            let item of listadoPermisosAsignadosModal
+              | paginate
+                : {
+                    itemsPerPage: 5,
+                    currentPage: pModalPermisos,
+                    id: 'pModalPermisos'
+                  }
+          "
+        >
+          <i class="bx bx-pie-chart-alt icon"></i>
+          <span class="text nav-text">{{ item.nombre | titlecase }}</span>
+        </li>
+      </ul> -->
+      <mat-list>
+        <div mat-subheader><strong>Roles:</strong></div>
+        <mat-divider></mat-divider>
+        <mat-list-item *ngFor="
+            let item of listadoPermisosAsignadosModal
+              | paginate
+                : {
+                    itemsPerPage: 5,
+                    currentPage: pModalPermisos,
+                    id: 'pModalPermisos'
+                  }
+          ">
+          <mat-icon matListItemIcon style="margin-right: 10px">label</mat-icon>
+          <div matListItemTitle>
+            {{ item.name | titlecase }}
+            {{
+            item.permission === true
+            ? ""
+            : "(Pendiente por asignación de permisos)"
+            }}
+          </div>
+        </mat-list-item>
+      </mat-list>
+      <br />
+      <div class="d-flex justify-content-center">
+        <pagination-controls previousLabel="Anterior" nextLabel="Siguiente" (pageChange)="pModalPermisos = $event"
+          id="pModalPermisos">
+        </pagination-controls>
+      </div>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <div class="row">
+        <div class="col">
+          <img src="../../../../assets/images/search_no.1ddc8c4.jpg" alt="" width="250" height="250" />
+        </div>
+        <div class="col">
+          El usuario <strong>{{ selectedRol.username }}</strong> no tiene
+          asignado ningún rol.
+          <!-- , para modificar este estado clic en el siguiente boton -->
+          <!-- <button
+            class="btn-primary"
+            (click)="openModal(template, selectedRol)"
+          >
+            Asignar rol
+          </button> -->
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>

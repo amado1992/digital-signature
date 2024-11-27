@@ -1,0 +1,20 @@
+<ng-container *ngIf="bs; else elseTemplate">
+  <div *ngIf="!(bs | async); else divListado" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</ng-container>
+<ng-template #elseTemplate>
+  <div *ngIf="!array; else divListado" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</ng-template>

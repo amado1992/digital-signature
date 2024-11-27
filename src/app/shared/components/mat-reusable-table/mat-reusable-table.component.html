@@ -1,0 +1,317 @@
+<ng-container>
+  <!-- Filter -->
+  <ng-container *ngIf="isFilterable" [matColumnDef]="this.rowActionIcon">
+    <!-- <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="filter" />
+    </mat-form-field> -->
+  </ng-container>
+
+  <!-- Table -->
+  <div class="table-responsive">
+    <table mat-table [dataSource]="tableDataSource" matSort>
+      <!-- action column -->
+      <ng-container
+        *ngIf="rowActionIcon?.length"
+        [matColumnDef]="rowActionIcon"
+        sticky
+      >
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [id]="rowActionIcon"
+          (click)="emitRowAction(element)"
+        >
+          <!-- <button mat-button>
+          <mat-icon>{{ rowActionIcon }}</mat-icon>
+        </button> -->
+          <!-- Opciones generales  -->
+          <button
+            mat-icon-button
+            *ngIf="BasicIcon"
+            [matMenuTriggerFor]="menu"
+            aria-label="Example icon-button with a menu"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" class="tight-menu">
+            <button
+              mat-menu-item
+              (click)="emitEditAction(element)"
+              *ngIf="BasicIcon"
+            >
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitDeleteAction(element)"
+              *ngIf="BasicIcon"
+            >
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitCertificadosAction(element)"
+              *ngIf="CertificadosIcon"
+            >
+              <mat-icon>insert_drive_file</mat-icon>
+              <span>Certificados de este cliente</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitCuentasBancariasAction(element)"
+              *ngIf="CuentasBancariasIcon"
+            >
+              <mat-icon>attach_money</mat-icon>
+              <span>Cuentas Bancarias de este cliente</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitPermisosAction(element)"
+              *ngIf="PermisosIcon"
+            >
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Permisos asignados a este rol</span>
+            </button>
+
+            <button mat-menu-item (click)="emitPermisosAsignAction(element)" *ngIf="AsignPermisosIcon">
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Asignar permisos</span>
+            </button>
+
+            <button mat-menu-item click="" *ngIf="RolesAsignadosIcon?.length">
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Roles asignados a este usuario</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitAsociarAction(element)"
+              [disabled]="!element.activo"
+              *ngIf="AsociarIcon"
+            >
+              <mat-icon>link</mat-icon>
+              <span>Asociar clientes a este plan</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitUsuariosAction(element)"
+              *ngIf="UsuariosIcon"
+            >
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Usuarios asociados a este cliente</span>
+            </button>
+          </mat-menu>
+          <!-- Opciones para Planes -->
+          <button
+            mat-icon-button
+            *ngIf="BasicPlanIcon"
+            [matMenuTriggerFor]="menuPlanes"
+            aria-label="Example icon-button with a menu"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menuPlanes="matMenu" class="tight-menu">
+            <button
+              mat-menu-item
+              (click)="emitEditAction(element)"
+              matTooltip="No se puede editar este plan porque tiene asociado clientes."
+              matTooltipPosition="after"
+              [matTooltipDisabled]="element.clients != undefined ? !element.clients.length : true"
+              [disabled]="element.clients != undefined ? (!element.clients.length ? false : true) : true"
+              *ngIf="BasicPlanIcon && element.clients != undefined"
+            >
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitDeleteAction(element)"
+              matTooltip="No se puede eliminar este plan porque tiene asociado clientes."
+              matTooltipPosition="after"
+              [matTooltipDisabled]="element.clients != undefined ? !element.clients.length : true"
+              [disabled]="element.clients != undefined ? (!element.clients.length ? false : true) : true"
+              *ngIf="BasicPlanIcon"
+            >
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitDetallesPlanAction(element)"
+              *ngIf="BasicPlanIcon"
+            >
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Detalles</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="emitAsociarAction(element)"
+              matTooltip="No se puede asociar clientes a este plan porque se encuentra deshabilitado"
+              matTooltipPosition="after"
+              [matTooltipDisabled]="element.activo"
+              [disabled]="!element.activo"
+              *ngIf="AsociarIcon"
+            >
+              <mat-icon>link</mat-icon>
+              <span>Asociar clientes a este plan</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+      <!-- action column -->
+      <ng-container
+        *ngFor="let tableColumn of tableColumns"
+        [matColumnDef]="tableColumn.name"
+      >
+        <!-- if sortable column header -->
+        <ng-container *ngIf="tableColumn.isSortable; else notSortable">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ tableColumn.name }}
+          </th>
+        </ng-container>
+        <!-- else not sortable -->
+        <ng-template #notSortable>
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [class.text-right]="tableColumn.position == 'right'"
+          >
+            {{ tableColumn.name }}
+          </th>
+        </ng-template>
+
+        <!-- column data -->
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [class.text-right]="tableColumn.position == 'right'"
+        >
+          <!-- isDate column header -->
+          <!-- <ng-container *ngIf="tableColumn.isDate">
+          {{ element | dataPropertyGetter : tableColumn.dataKey }}
+        </ng-container> -->
+          <!-- isBooleable column header -->
+          <ng-container
+            *ngIf="tableColumn.isBooleable === true; else standarColumn"
+          >
+            <ng-container
+              *ngIf="
+                tableColumn.isYesNoBooleable === true;
+                else standarBooleable
+              "
+            >
+              {{
+                (element | dataPropertyGetter : tableColumn.dataKey) === 1 ||
+                (element | dataPropertyGetter : tableColumn.dataKey) === true
+                  ? "Si"
+                  : "No"
+              }}
+            </ng-container>
+            <ng-template #standarBooleable>
+              <span class="badge badge-lg badge-dot">
+                <i
+                  [class]="
+                    (element | dataPropertyGetter : tableColumn.dataKey) ===
+                      1 ||
+                    (element | dataPropertyGetter : tableColumn.dataKey) ===
+                      true
+                      ? 'bg-success '
+                      : 'bg-danger'
+                  "
+                ></i>
+                <a>
+                  {{
+                    (element | dataPropertyGetter : tableColumn.dataKey) ===
+                      1 ||
+                    (element | dataPropertyGetter : tableColumn.dataKey) ===
+                      true
+                      ? "Habilitado"
+                      : "Deshabilitado"
+                  }}
+                </a>
+              </span>
+            </ng-template>
+          </ng-container>
+          <ng-template #standarColumn>
+            <!-- Así funcionaba antes del [ngSwitch] -->
+            <!-- {{
+              (element | dataPropertyGetter : tableColumn.dataKey) === null
+                ? "-"
+                : (element | dataPropertyGetter : tableColumn.dataKey)
+            }} -->
+            <!-- Así funcionaba antes del [ngSwitch] -->
+
+            <ng-container
+              [ngSwitch]="element | dataPropertyGetter : tableColumn.dataKey"
+            >
+              <ng-container *ngSwitchCase="null">
+                {{ "-" }}
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'[object Object]'">
+                {{
+                  tableColumn.objectDataKey &&
+                    (element
+                      | dataPropertyGetter : tableColumn.dataKey
+                      | dataPropertyGetter : tableColumn.objectDataKey)
+                }}
+              </ng-container>
+
+              <!-- <ng-container
+                *ngSwitchCase="
+                  typeOf(element | dataPropertyGetter : tableColumn.dataKey) ===
+                  'string'
+                "
+              >
+              </ng-container> -->
+
+              <ng-container ng-switch-default>
+                {{
+                  (element | dataPropertyGetter : tableColumn.dataKey) !==
+                    "[object Object]" &&
+                    (element | dataPropertyGetter : tableColumn.dataKey)
+                }}
+              </ng-container>
+
+              <!-- <ng-container ng-switch-default>
+                value: {{ element | dataPropertyGetter : tableColumn.dataKey }}
+              </ng-container> -->
+
+              <!-- <ng-container ng-switch-default>
+                {{
+                  typeOf(element | dataPropertyGetter : tableColumn.dataKey) ===
+                  "string"
+                    ? (element | dataPropertyGetter : tableColumn.dataKey)
+                    : "objeto"
+                }}
+              </ng-container> -->
+            </ng-container>
+          </ng-template>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No se encontraron datos para el filtro "<strong>{{
+            this.term
+          }}</strong
+          >"
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <mat-paginator
+    *ngIf="isPageable"
+    [pageSizeOptions]="paginationSizes"
+    [pageSize]="defaultPageSize"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+</ng-container>

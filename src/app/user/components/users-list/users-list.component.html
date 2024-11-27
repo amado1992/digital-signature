@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+
+        <button (click)="newUser()" class="btn btn-secondary my-3">Nuevo Usuario</button>
+
+    </div>
+    <div class="col table-responsive table-content table-fixhead">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Roles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr (dblclick)="edit( user.idusuario )" class="body-elements" *ngFor="let user of users$ | async">
+
+            <td>{{ user?.idusuario }}</td>
+            <td>{{ user?.usuario }}</td>
+            <td>{{ user?.nombre }}</td>
+            <td>{{ user?.apellidos }}</td>
+            <td>{{ user?.correo }}</td>
+            <td>{{ user?.roles }}</td>
+
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

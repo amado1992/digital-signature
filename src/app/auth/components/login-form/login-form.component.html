@@ -1,0 +1,87 @@
+<!-- <div class="container-fluid mx-0 px-0 row"> -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="row">
+    <!-- Username -->
+    <div class="col-7 mb-3">
+      <!-- <span class="input-item">
+        <i class="fa fa-user-circle"></i>
+      </span> -->
+      <input
+        [ngClass]="{
+          'is-invalid': username?.invalid && username?.touched,
+          'is-valid': username?.valid
+        }"
+        formControlName="username"
+        type="text"
+        class="form-control"
+        id="username"
+        placeholder="Usuario"
+        (focusout)="onFocusOutEvent($event)"
+        autocomplete="off"
+      />
+      <div
+        #ipt
+        *ngIf="username?.hasError('required')"
+        style="color: aliceblue"
+        class="invalid-feedback animate__animated animate__heartBeat"
+      >
+        El usuario es obligatorio.
+      </div>
+    </div>
+    <!-- Password -->
+    <div class="col-7 mb-3">
+      <!-- <span class="input-item">
+        <i class="fa fa-key"></i>
+      </span> -->
+      <input
+        [ngClass]="{
+          'is-invalid':
+            (password?.invalid && password?.touched) ||
+            password?.hasError('notwhiteSpaces'),
+          'is-valid': password?.valid
+        }"
+        formControlName="password"
+        type="password"
+        class="form-control"
+        id="password"
+        placeholder="Clave"
+      />
+      <div
+        *ngIf="password?.hasError('required')"
+        style="color: aliceblue"
+        class="invalid-feedback animate__animated animate__heartBeat"
+      >
+        La clave es obligatoria.
+      </div>
+      <div
+        *ngIf="password?.hasError('notwhiteSpaces')"
+        class="invalid-feedback"
+      >
+        La clave no debe tener espacios en blanco.
+      </div>
+    </div>
+    <div class="col-5 mb-3">
+      <button [disabled]="loginForm.invalid" class="btn btn-secondary">
+        Iniciar Sesión
+      </button>
+    </div>
+    <div>
+      <a style="color: aliceblue" [routerLink]="['/reset-password']">
+        He olvidado mi contraseña
+      </a>
+    </div>
+  </form>
+  <div *ngIf="data" class="alert alert-danger">
+    <div
+      class="animate__animated animate__fadeIn animate__faster"
+      [ngClass]="data ? 'show-msgInvalidUser' : 'hide-msgInvalidUser'"
+    >
+      <strong>Usuario</strong> o <strong>clave</strong> incorrecta, por favor
+      verifique credenciales.
+    </div>
+  </div>
+  <br />
+  <br /><br />
+</div>
+
+<!-- </div> -->

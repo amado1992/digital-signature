@@ -1,0 +1,110 @@
+//https: //medium.com/ampersand-academy/scrollable-table-in-angular-material-6f488e114db0
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+
+    .mat-table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        display: table;
+        border-collapse: collapse;
+        margin: 0px;
+    }
+
+    .mat-row,
+    .mat-header-row {
+        display: table-row;
+    }
+
+    .mat-cell,
+    .mat-header-cell {
+        word-wrap: initial;
+        display: table-cell;
+        padding: 0px 5px;
+        line-break: unset;
+        width: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        vertical-align: middle;
+    }
+
+        // .mat-column-Identificador {
+        //     width: 5%;
+        //     text-align: left;
+        //     padding-left: 16px;
+        // }
+    
+        // .mat-column-ruta {
+        //     width: 80%;
+        //     text-align: left;
+        //     padding-left: 16px;
+        // }
+        
+}
+///////////////////////////////////////////////////
+table {
+    width: 100%;
+}
+
+th,
+td {
+    padding: 10px !important;
+}
+
+mat-form-field {
+    width: 40%;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+//custom css class para las columnas
+th.mat-header-cell {
+    text-align: left !important;
+    font-weight: bold;
+    background-color: #f5f9fc;
+    color: #525f7f
+}
+
+.mat-icon {
+    color: #16192c;
+}
+
+.mat-table {
+    overflow-x: scroll;
+}
+
+// .mat-cell,
+// .mat-header-cell {
+//     word-wrap: initial;
+//     display: table-cell;
+//     padding: 0px 10px;
+//     line-break: unset;
+//     width: 100%;
+//     white-space: nowrap;
+//     overflow: hidden;
+//     vertical-align: middle;
+// }
+
+.mat-row,
+.mat-header-row {
+    display: table-row;
+}
+
+// .mat-column-identifier {
+//     max-width: 60px !important;
+//     min-width: 60px !important;
+// }
+
+.mat-column-identifier {
+    width: 5%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.customWidthClass {
+    flex: 0 0 75px;
+}

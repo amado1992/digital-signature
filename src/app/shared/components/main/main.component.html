@@ -1,0 +1,223 @@
+<script src="../../../../src/assets/script.js"></script>
+<!-- <p>main works!</p> -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <!-- <nav class="sidebar close"> -->
+  <!-- Con la clase close se carga la web con el panel en modo collapse -->
+  <nav class="sidebar">
+    <header>
+      <div class="image-text">
+        <span class="image">
+          <img src="../../../../assets/images/logo/Logo.jpeg" alt="Logo" />
+        </span>
+        <!-- <div class="textt header-textt"> -->
+        <!-- Con las clases "text header-text" el texto se oculta en modo collapse-->
+        <div class="text header-text">
+          <!-- <span class="name">eFirma</span> -->
+          <h5 class="mb-0 ls-tight name">eFirma</h5>
+          <span class="profession"></span>
+        </div>
+      </div>
+
+      <i class="toggle"><mat-icon>keyboard_arrow_right</mat-icon></i>
+    </header>
+
+    <div class="menu-bar">
+      <div class="menu">
+        <!-- <li class="search-box">
+          <i class="bx bx-search nav-link"></i>
+          <input type="text" placeholder="Buscar..." />
+        </li> -->
+
+        <ul class="menu-links">
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Inicio"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a
+              routerLink="/dashboard"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              <!-- <p style="color: #2F46A3;">al</p> -->
+              <!-- <div class="menu-item-area"> -->
+              <!-- <div class="tooltip">
+                <div class="tooltipContent">Alerts</div>
+              </div> -->
+
+              <i class="material-icons" style="margin-left: 8px">home</i>
+              <span class="text nav-text">Inicio</span>
+              <!-- </div> -->
+              <!-- <p style="opacity: 0.5">al</p> -->
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Clientes API"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="clientesApi" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >laptop_chromebook</i
+              >
+              <span class="text nav-text">Clientes API</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Permisos"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="permisos" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px">security</i>
+              <span class="text nav-text">Permisos</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin', 'AdminGestion']"
+            class="nav-link"
+            matTooltip="Clientes"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="clientes" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >supervisor_account</i
+              >
+              <span class="text nav-text">Clientes</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Roles"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="roles" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >swap_horizontal_circle</i
+              >
+              <span class="text nav-text">Roles</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Usuarios"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="usuarios" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >supervised_user_circle</i
+              >
+              <span class="text nav-text">Usuarios</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Superadmin']"
+            class="nav-link"
+            matTooltip="Planes"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="planes" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >markunread_mailbox</i
+              >
+              <span class="text nav-text">Planes</span>
+            </a>
+          </li>
+
+          <li
+            *appShowForRoles="['Comercial']"
+            class="nav-link"
+            matTooltip="Mis Planes"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a routerLink="mis-planes" routerLinkActive="active">
+              <i class="material-icons" style="margin-left: 8px"
+                >markunread_mailbox</i
+              >
+              <span class="text nav-text">Mis Planes</span>
+            </a>
+          </li>
+
+          <li class="nav-link">
+            <a
+              routerLink="reportes"
+              routerLinkActive="active"
+              matTooltip="Reportes"
+              matTooltipPosition="right"
+              [matTooltipDisabled]="showMatTooltip"
+            >
+              <i class="material-icons" style="margin-left: 8px"
+                >chrome_reader_mode</i
+              >
+              <span class="text nav-text">Reportes</span>
+            </a>
+          </li>
+
+          <br />
+          <li
+            class="nav-link"
+            matTooltip="Cerrar sesión"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="showMatTooltip"
+          >
+            <a href="#">
+              <i class="material-icons" style="margin-left: 8px"
+                >power_settings_new</i
+              >
+              <span class="text nav-text" (click)="logout()"
+                >Cerrar sesión</span
+              >
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bottom-content">
+        <!-- <li class="">
+          <a href="#">
+            <i class="bx bx-log-out icon"></i>
+            <span class="text nav-text">Cerrar sesión</span>
+          </a>
+        </li>
+
+        <li class="mode">
+          <div class="moon-sun">
+            <i class="bx bx-moon icon moon"></i>
+            <i class="bx bx-sun icon sun"></i>
+          </div>
+          <span class="mode-text text"> Dark Mode </span>
+
+          <div class="toggle-switch">
+            <span class="switch"></span>
+          </div>
+        </li> -->
+      </div>
+    </div>
+  </nav>
+
+  <section class="home mat-typography">
+    <div class="textt">
+      <!-- Dashboard -->
+      <router-outlet></router-outlet>
+    </div>
+  </section>
+</div>

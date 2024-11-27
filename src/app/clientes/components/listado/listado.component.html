@@ -1,0 +1,1311 @@
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Clientes"></app-header>
+
+  <!--<br />-->
+  <!-- <div *ngIf="!ClientesList; else divApiClients" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div> -->
+
+  <!--<app-loading-panel [array]="ClientesList" [divListado]="divApiClients"></app-loading-panel>
+  <br />-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -20px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Cliente móvil " #input>
+    </mat-form-field>
+
+    <div style="margin-bottom: 4px;">
+      <button style="background: #2f46a3;" mat-mini-fab color="primary" (click)="openModal(template, undefined)">
+        <mat-icon style="color: #fff;" aria-label="Crear">add</mat-icon>
+      </button>
+    </div>
+
+    <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre:</span>
+          {{ valueRow.name }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Apellidos</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Apellidos:</span>
+          {{ valueRow.lastName }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="nombreCorto">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre corto</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre corto:</span>
+          {{ valueRow.nombreCorto != null ? valueRow.nombreCorto : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="codigoReeup">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Código REEUP</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Código REEUP:</span>
+          {{ valueRow.codigoReeup != null ? valueRow.codigoReeup : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="contactEmail">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Correo electrónico</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Correo electrónico:</span>
+          {{ valueRow.contactEmail != null ? valueRow.contactEmail : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="contactPhone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Teléfono:</span>
+          {{ valueRow.contactPhone != null ? valueRow.contactPhone : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="country">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>País</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">País:</span>
+          {{ valueRow.country != null ? valueRow.country : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="province">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Provincia:</span>
+          {{ valueRow.province != null ? valueRow.province : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="institutional">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Institucional</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow" style="text-align: center !important;">
+          <span class="mobile-label">Institucional:</span>
+          {{ valueRow.institutional != null ? (valueRow.institutional ? "Si" : "No") : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Descripción:</span>
+          {{ valueRow.description }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="mobile-label">Acciones:</span>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" class="tight-menu">
+
+            <button mat-menu-item (click)="openModal(template, element)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+
+            <button mat-menu-item (click)="deletedItem(element)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+
+            <!--<button mat-menu-item (click)="openModalCertificadosAsociados(
+                templateCertificadosAsociados,
+                element
+              )">
+              <mat-icon>insert_drive_file</mat-icon>
+              <span>Certificados de este cliente</span>
+            </button>-->
+
+            <button mat-menu-item (click)="openModalClientCertificatesDialog(element)">
+              <mat-icon>insert_drive_file</mat-icon>
+              <span>Certificados de este cliente</span>
+            </button>
+
+            <button mat-menu-item (click)="openModalDatosBancarios(templateDatosBancarios, element)">
+              <mat-icon>attach_money</mat-icon>
+              <span>Cuentas bancarias de este cliente</span>
+            </button>
+
+            <button mat-menu-item (click)="openModalUsuariosAsociados(templateUsuariosAsociados, element)">
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Usuarios asociados a este cliente</span>
+            </button>
+
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de planes">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+
+  <ng-template #divApiClients>
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <a class="btn btn-primary btn-lg active mcard wallet" (click)="openModal(template, undefined)"
+              kunTooltip="Crear un nuevo cliente" kunTooltipPlacement="top" role="button"
+              aria-pressed="true"><mat-icon>add</mat-icon></a>
+          </div>
+          <div class="col">
+            <!-- <div class="form-group">
+              <input
+                type="text"
+                class="form-control form-control-placeholdericon"
+                id="search-text"
+                aria-describedby="search-text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar cliente..."
+                autofocus
+              />
+            </div> -->
+            <app-filter-box [isBtnVisible]="false" placeholder="Buscar cliente..."
+              (onKeyUp)="keyupHandler($event)"></app-filter-box>
+          </div>
+        </div>
+        <hr />
+        <ng-container *ngIf="ClientesList?.length == 0; else elseTemplate">
+          <app-no-data-found item="Cliente"></app-no-data-found>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="card shadow border-0 mb-7">
+            <div class="card-header">
+              <h5 class="mb-0">Listado</h5>
+            </div>
+            <!-- Listado de Clientes -->
+            <app-mat-reusable-table [tableData]="this.ClientesList" [tableColumns]="this.clientesTableColumns"
+              [isFilterable]="true" [isPageable]="true" [paginationSizes]="[2, 4, 6, 8, 10]" [defaultPageSize]="8"
+              [filter]="searchText" itemsPerPageLabel="Clientes por página:" [rowActionIcon]="'remove_shopping_cart'"
+              [BasicIcon]="true" [CertificadosIcon]="true" [CuentasBancariasIcon]="true" [UsuariosIcon]="true"
+              (deleteAction)="deletedItem($event)" (editAction)="openModal(template, $event)" (certificadosAction)="
+                openModalCertificadosAsociados(
+                  templateCertificadosAsociados,
+                  $event
+                )
+              " (cuentasBancariasAction)="
+                openModalDatosBancarios(templateDatosBancarios, $event)
+              " (usuariosAsociadosAction)="
+                openModalUsuariosAsociados(templateUsuariosAsociados, $event)
+              "></app-mat-reusable-table>
+            <div class="card-footer border-0 py-5">
+              <!-- <span class="text-muted text-sm"
+            >Showing 10 items out of 250 results found</span
+          > -->
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </main>
+  </ng-template>
+
+  <!-- <div
+    *ngIf="errorResponse; else divApiClients"
+    class="alert alert-danger"
+    role="alert"
+  >
+    <h6>Ha ocurrido el siguiente error: {{ errorResponse.message }}</h6>
+  </div> -->
+
+  <ng-template #template>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <i class="bx bx-id-card icon"></i>
+          {{
+          componentForm.value.id !== null
+          ? "Modificar cliente"
+          : "Adicionar nuevo cliente"
+          }}
+        </h4>
+
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body autoScroll">
+        <form *ngIf="componentForm" [formGroup]="componentForm" (ngSubmit)="SaveChages()">
+          <div class="row">
+            <label for="inputEmail33" class="col-sm-2 col-form-label required">Tipo de Cliente:</label>
+            <div class="col-sm-4">
+              <ng-multiselect-dropdown [placeholder]="'...Seleccione...'" [settings]="dropdownSettingsTipoCliente"
+                [data]="dropdownListTipoCliente" [(ngModel)]="selectedItemTipoCliente" formControlName="tipoCliente"
+                (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)"
+                [disabled]="disableTipoClienteDropdown">
+              </ng-multiselect-dropdown>
+            </div>
+            <span class="form-text text-muted">Por favor, seleccione tipo de cliente a crear</span>
+          </div>
+          <hr />
+          <div class="container">
+            <div class="row">
+              <!-- Tipo de cliente -->
+              <!-- Iba aqui el control, pero estaba causando problemas con el style -->
+              <!-- Wizard steps -->
+              <!-- https://codepen.io/adethis/pen/BaWMLKO?editors=1010 -->
+              <!-- https://medium.com/an-idea/angular-ngclass-with-the-ternary-operator-a32d1b63ac4e -->
+              <!-- ul/li section with wizard options -->
+              <div class="row">
+                <nav class="stroke">
+                  <ul class="nav nav-pills justify-content-center mb-3 text-center custom" id="pills-tab"
+                    role="tablist">
+                    <!-- <div class="step-line"></div> -->
+                    <!-- Datos Generales -->
+                    <li class="nav-item">
+                      <a [ngClass]="
+                          !step1Hidden
+                            ? 'nav-link active custom'
+                            : 'nav-link custom'
+                        " [hidden]="hiddenWizard" (click)="pillclick1()">
+                        <span class="icon"><i class="bi bi-person-circle"></i></span>
+                        <span class="text">Datos Generales</span>
+                      </a>
+                    </li>
+                    <!-- Datos Bancarios -->
+                    <li class="nav-item">
+                      <a [ngClass]="
+                          !step2Hidden
+                            ? 'nav-link active custom'
+                            : 'nav-link custom'
+                        " [hidden]="hiddenWizard" (click)="pillclick2()">
+                        <span class="icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="text">Datos Bancarios</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+
+              <div class="tab-content pt-4" id="pills-tabContent">
+                <!-- Step 1 -->
+                <div class="tab-pane fade show active animate__animated animate__fadeIn animate__faster" id="pills-1"
+                  role="tabpanel" aria-labelledby="pills-home-tab" [hidden]="step1Hidden">
+                  <div class="row">
+                    <div class="form-group row">
+                      <!-- Nombre -->
+                      <div class="col-md-3">
+                        <label for="inputEmail3" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Nombre:</label>
+                        <!-- <div class="col-sm-7"> -->
+                        <input type="text" title="Nombre" placeholder="Nombre" formControlName="name"
+                          (keyup)="checkNombreAvailability($event)" [class.is-invalid]="
+                            componentForm.controls['name'].invalid &&
+                            (componentForm.controls['name'].dirty ||
+                              componentForm.controls['name'].touched)
+                          " class="form-control my-2" />
+                        <!-- </div> -->
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['name'].invalid &&
+                            (componentForm.controls['name'].dirty ||
+                              componentForm.controls['name'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div [innerHTML]="nombreFieldErrorMsg"></div>
+                          </div>
+                        </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="name"
+                          msgRequired="El campo Nombre es requerido." msgPattern="Valor no permitido para este campo."
+                          [msgIncorrect]="this.nombreFieldErrorMsg"></app-validation-messages>
+                      </div>
+                      <!-- Nombre Corto-->
+                      <div class="col-md-3">
+                        <label for="inputEmail3" [ngClass]="
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Nombre Corto:</label>
+                        <!-- <div class="col-sm-7"> -->
+                        <input type="text" [attr.disabled]="clienteNatural ? '' : null" title="Nombre"
+                          placeholder="Nombre Corto" (keyup)="checkNombreCortoAvailability($event)"
+                          formControlName="nameCorto" class="form-control my-2" [class.is-invalid]="
+                            componentForm.controls['nameCorto'].invalid &&
+                            (componentForm.controls['nameCorto'].dirty ||
+                              componentForm.controls['nameCorto'].touched)
+                          " />
+                        <!-- </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="nameCorto"
+                          msgRequired="El campo Nombre Corto es requerido."
+                          msgPattern="Valor no permitido para este campo."
+                          [msgIncorrect]="this.nombreCortoFieldErrorMsg"></app-validation-messages>
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['nameCorto'].invalid &&
+                            (componentForm.controls['nameCorto'].dirty ||
+                              componentForm.controls['nameCorto'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div [innerHTML]="nombreCortoFieldErrorMsg"></div>
+                          </div>
+                        </div> -->
+                      </div>
+                      <!-- Apellidos -->
+                      <div class="col-md-3">
+                        <label for="inputEmail3" [ngClass]="
+                            tipoCliente === 'Natural'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Apellidos:</label>
+                        <!-- <div class="col-sm-6"> -->
+                        <input type="text" title="Apellidos" [attr.disabled]="clienteJuridico ? '' : null"
+                          placeholder="Apellidos" formControlName="lastName" class="form-control my-2"
+                          [class.is-invalid]="
+                            componentForm.controls['lastName'].invalid &&
+                            (componentForm.controls['lastName'].dirty ||
+                              componentForm.controls['lastName'].touched)
+                          " />
+                        <!-- </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="lastName"
+                          msgRequired="El campo Apellidos es requerido."
+                          msgPattern="Valor no permitido para este campo."></app-validation-messages>
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['lastName'].invalid &&
+                            (componentForm.controls['lastName'].dirty ||
+                              componentForm.controls['lastName'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div>Apellidos requerido</div>
+                          </div>
+                        </div> -->
+                      </div>
+                      <!-- Correo electrónico -->
+                      <div class="col-md-3">
+                        <label for="inputEmail33" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Correo:</label>
+                        <!-- <div class="col-sm-7"> -->
+                        <input type="text" title="Email" placeholder="Correo" (keyup)="checkEmailAvailability($event)"
+                          formControlName="email" class="form-control my-2" [class.is-invalid]="
+                            componentForm.controls['email'].invalid &&
+                            (componentForm.controls['email'].dirty ||
+                              componentForm.controls['email'].touched)
+                          " />
+                        <!-- </div> -->
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['email'].invalid &&
+                            (componentForm.controls['email'].dirty ||
+                              componentForm.controls['email'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div [innerHTML]="emailFieldErrorMsg"></div>
+                          </div>
+                        </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="email"
+                          msgRequired="El campo Correo Electrónico es requerido."
+                          msgPattern="Valor no permitido para este campo."
+                          msgMinLength="Este campo debe tener un mínimo de 8 caracteres"></app-validation-messages>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <!-- CI/Passpord -->
+                    <div class="col-md-4">
+                      <label for="inputEmail33" [ngClass]="
+                          tipoCliente === 'Natural'
+                            ? 'col-sm-6 col-form-label required'
+                            : 'col-sm-6 col-form-label'
+                        ">CI/Pasaporte:</label>
+                      <!-- <div class="col-sm-7"> -->
+                      <input type="text" [attr.disabled]="clienteJuridico ? '' : null" title="ci"
+                        placeholder="CI/Pasaporte" (keyup)="checkCIAvailability($event)" formControlName="ci"
+                        [class.is-invalid]="
+                          componentForm.controls['ci'].invalid &&
+                          (componentForm.controls['ci'].dirty ||
+                            componentForm.controls['ci'].touched)
+                        " class="form-control my-2" />
+                      <!-- </div> -->
+                      <app-validation-messages [form]="componentForm" fieldToValidate="ci"
+                        msgRequired="El campo Carnet Identidad es requerido."
+                        msgPattern="Valor no permitido para este campo."
+                        msgMinLength="Este campo debe tener mínimo 11 caracteres"></app-validation-messages>
+                      <!-- <div
+                        *ngIf="
+                          componentForm.controls['ci'].invalid &&
+                          (componentForm.controls['ci'].dirty ||
+                            componentForm.controls['ci'].touched)
+                        "
+                        class="alert"
+                      >
+                        <div
+                          class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                          role="alert"
+                        >
+                          <i class="bx bxs-error-circle"></i>
+                          <div [innerHTML]="ciFieldErrorMsg"></div>
+                        </div>
+                      </div> -->
+                    </div>
+                    <!-- Dirección -->
+                    <div class="col-md-4">
+                      <label for="inputEmail33" [ngClass]="
+                          tipoCliente === 'Natural' ||
+                          tipoCliente === 'Juridico'
+                            ? 'col-sm-6 col-form-label required'
+                            : 'col-sm-6 col-form-label'
+                        ">Dirección:</label>
+                      <!-- <div class="col-sm-8"> -->
+                      <textarea title="direccion" class="form-control my-2" placeholder="Direción"
+                        formControlName="direccion" class="form-control my-2" [class.is-invalid]="
+                          componentForm.controls['direccion'].invalid &&
+                          (componentForm.controls['direccion'].dirty ||
+                            componentForm.controls['direccion'].touched)
+                        ">
+                      </textarea>
+                      <!-- </div> -->
+                      <app-validation-messages [form]="componentForm" fieldToValidate="direccion"
+                        msgRequired="El campo Dirección es requerido."
+                        msgPattern="Valor no permitido para este campo."></app-validation-messages>
+                      <!-- <div
+                        *ngIf="
+                          componentForm.controls['direccion'].invalid &&
+                          (componentForm.controls['direccion'].dirty ||
+                            componentForm.controls['direccion'].touched)
+                        "
+                        class="alert"
+                      >
+                        <div
+                          class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                          role="alert"
+                        >
+                          <i class="bx bxs-error-circle"></i>
+                          <div>Dirección requerido</div>
+                        </div>
+                      </div> -->
+                    </div>
+                    <!-- Código REU -->
+                    <div class="col-md-4">
+                      <label for="inputEmail33" [ngClass]="
+                          tipoCliente === 'Juridico'
+                            ? 'col-sm-6 col-form-label required'
+                            : 'col-sm-6 col-form-label'
+                        ">Código:</label>
+                      <!-- <div class="col-sm-7"> -->
+                      <input type="text" [attr.disabled]="clienteNatural ? '' : null" title="ci"
+                        placeholder="Código REEUP" (keyup)="checkCodigoAvailability($event)" formControlName="codigo"
+                        class="form-control my-2" [class.is-invalid]="
+                          componentForm.controls['codigo'].invalid &&
+                          (componentForm.controls['codigo'].dirty ||
+                            componentForm.controls['codigo'].touched)
+                        " />
+                      <!-- </div> -->
+                      <app-validation-messages [form]="componentForm" fieldToValidate="codigo"
+                        msgRequired="El campo Código es requerido." msgPattern="Valor no permitido para este campo."
+                        msgMinLength="Este campo debe tener un mínimo de 4 caracteres"
+                        [msgIncorrect]="this.codigoFieldErrorMsg"></app-validation-messages>
+                      <!-- <div
+                        *ngIf="
+                          componentForm.controls['codigo'].invalid &&
+                          (componentForm.controls['codigo'].dirty ||
+                            componentForm.controls['codigo'].touched)
+                        "
+                        class="alert"
+                      >
+                        <div
+                          class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                          role="alert"
+                        >
+                          <i class="bx bxs-error-circle"></i>
+                          <div [innerHTML]="codigoFieldErrorMsg"></div>
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group row">
+                      <!-- Teléfono -->
+                      <div class="col-md-3">
+                        <label for="inputEmail33" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Teléfono:</label>
+                        <!-- <div class="col-sm-7"> -->
+                        <input type="text" title="telefono" placeholder="Teléfono" formControlName="contactPhone"
+                          (keyup)="checkTelefonoAvailability($event)" class="form-control my-2" [class.is-invalid]="
+                            componentForm.controls['contactPhone'].invalid &&
+                            (componentForm.controls['contactPhone'].dirty ||
+                              componentForm.controls['contactPhone'].touched)
+                          " />
+                        <!-- </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="contactPhone"
+                          msgRequired="El campo Teléfono es requerido." msgPattern="Valor no permitido para este campo."
+                          msgMinLength="Esta campo debe tener 8 caracteres"></app-validation-messages>
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['contactPhone'].invalid &&
+                            (componentForm.controls['contactPhone'].dirty ||
+                              componentForm.controls['contactPhone'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div [innerHTML]="telefonoFieldErrorMsg"></div>
+                          </div>
+                        </div> -->
+                      </div>
+                      <!-- País -->
+                      <div class="col-md-3">
+                        <label for="inputEmail33" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Pais:</label>
+                        <!-- <div class="col-sm-8"> -->
+                        <select placeholder="Country" class="form-select my-2" formControlName="pais"
+                          [(ngModel)]="selectedCountry" (change)="onPaisSelected($event)" [class.is-invalid]="
+                            componentForm.controls['pais'].invalid &&
+                            (componentForm.controls['pais'].dirty ||
+                              componentForm.controls['pais'].touched)
+                          ">
+                          <option disabled="true">Paises</option>
+                          <option *ngFor="let country of Countries" [selected]="country.name === selectedCountry">
+                            {{ country.name }}
+                          </option>
+                        </select>
+                        <!-- </div> -->
+                        <div *ngIf="
+                            componentForm.controls['pais'].invalid &&
+                            (componentForm.controls['pais'].dirty ||
+                              componentForm.controls['pais'].touched)
+                          " class="alert">
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert">
+                            <i class="bx bxs-error-circle"></i>
+                            <div>País requerido</div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Provincia -->
+                      <div class="col-md-3">
+                        <label for="inputEmail33" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Provincia:</label>
+                        <!-- <div class="col-sm-8"> -->
+                        <select placeholder="Provincia" [(ngModel)]="selectedProvince" formControlName="provincia"
+                          class="form-select my-2" [class.is-invalid]="
+                            componentForm.controls['provincia'].invalid &&
+                            (componentForm.controls['provincia'].dirty ||
+                              componentForm.controls['provincia'].touched)
+                          " [disabled]="true">
+                          <option disabled="true">Provincias/Estados</option>
+                          <option *ngFor="let state of states" [selected]="state.name === selectedProvince">
+                            {{ state.name }}
+                          </option>
+                        </select>
+                        <!-- </div> -->
+                        <div *ngIf="
+                            componentForm.controls['provincia'].invalid &&
+                            (componentForm.controls['provincia'].dirty ||
+                              componentForm.controls['provincia'].touched)
+                          " class="alert">
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert">
+                            <i class="bx bxs-error-circle"></i>
+                            <div>Provincia requerido</div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Descripción -->
+                      <div class="col-md-3">
+                        <label for="inputEmail33" [ngClass]="
+                            tipoCliente === 'Natural' ||
+                            tipoCliente === 'Juridico'
+                              ? 'col-sm-6 col-form-label required'
+                              : 'col-sm-6 col-form-label'
+                          ">Descripción:</label>
+                        <!-- <div class="col-sm-8"> -->
+                        <textarea title="descripcion" class="form-control my-2" placeholder="Descripción"
+                          formControlName="descripcion" [class.is-invalid]="
+                            componentForm.controls['descripcion'].invalid &&
+                            (componentForm.controls['descripcion'].dirty ||
+                              componentForm.controls['descripcion'].touched)
+                          " class="form-control my-2">
+                        </textarea>
+                        <!-- </div> -->
+                        <app-validation-messages [form]="componentForm" fieldToValidate="descripcion"
+                          msgRequired="El campo Descripción requerido."
+                          msgPattern="Valor no permitido para este campo."></app-validation-messages>
+                        <!-- <div
+                          *ngIf="
+                            componentForm.controls['descripcion'].invalid &&
+                            (componentForm.controls['descripcion'].dirty ||
+                              componentForm.controls['descripcion'].touched)
+                          "
+                          class="alert"
+                        >
+                          <div
+                            class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                            role="alert"
+                          >
+                            <i class="bx bxs-error-circle"></i>
+                            <div>Descripción requerido</div>
+                          </div>
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <pre>{{ componentForm.value | json }}</pre> -->
+                </div>
+                <!-- Step 2 -->
+                <div class="tab-pane fade show active animate__animated animate__fadeIn animate__faster" id="pills-2"
+                  role="tabpanel" aria-labelledby="pills-profile-tab" [hidden]="step2Hidden">
+                  <div class="row">
+                    <div id="data" class="form-group">
+                      <div class="row">
+                        <div class="col-md-12" formGroupName="definition">
+                          <div class="row" formArrayName="components">
+                            <tr *ngFor="
+                                let component of components().controls;
+                                let componentIndex = index
+                              ">
+                              <!-- Important!! this statement here([formGroupName]="componentIndex") -->
+                              <div class="form-group row" [formGroupName]="componentIndex">
+                                <!-- Número de Cuenta -->
+                                <div class="col-md-2">
+                                  <div>
+                                    <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                        tipoCliente === 'Juridico'
+                                          ? 'col-sm-6 col-form-label required'
+                                          : 'col-sm-6 col-form-label'
+                                      "># Cuenta:</label>
+                                    <input type="text" title="Nombre" placeholder="Cuenta Bancaria"
+                                      formControlName="cuenta" class="form-control my-2" [class.is-invalid]="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('cuenta')!.invalid &&
+                                        (components().controls[
+                                          componentIndex
+                                        ].get('cuenta')!.dirty ||
+                                          components().controls[
+                                            componentIndex
+                                          ].get('cuenta')!.touched)
+                                      " />
+                                  </div>
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'cuenta'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('cuenta')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('cuenta')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('cuenta')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>
+                                        Especifique una cuenta válida, debe
+                                        tener 16 caracteres.
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Titular -->
+                                <div class="col-md-2">
+                                  <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                      tipoCliente === 'Juridico'
+                                        ? 'col-sm-6 col-form-label required'
+                                        : 'col-sm-6 col-form-label'
+                                    ">Titular:</label>
+                                  <input type="text" title="Nombre" placeholder="Titular" formControlName="titular"
+                                    [class.is-invalid]="
+                                      components().controls[componentIndex].get(
+                                        'titular'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('titular')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('titular')!.touched)
+                                    " class="form-control my-2" />
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'titular'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('titular')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('titular')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('titular')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>Especifique un titular válido.</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Moneda -->
+                                <div class="col-md-2">
+                                  <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                      tipoCliente === 'Juridico'
+                                        ? 'col-sm-6 col-form-label required'
+                                        : 'col-sm-6 col-form-label'
+                                    ">Moneda:</label>
+                                  <!-- <div class="col-sm-7"></div> -->
+                                  <ng-multiselect-dropdown id="{{ componentIndex }}" [placeholder]="'...Seleccione...'"
+                                    [settings]="dropdownSettings" [data]="dropdownListMonedas" formControlName="moneda"
+                                    class="form-control my-2" (onSelect)="onItemSelectMoneda($event)"
+                                    (onDeSelect)="onItemDeSelectMoneda($event)" [class.is-invalid]="
+                                      components().controls[componentIndex].get(
+                                        'moneda'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('moneda')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('moneda')!.touched)
+                                    ">
+                                  </ng-multiselect-dropdown>
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'moneda'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('moneda')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('moneda')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('moneda')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>Especifique una moneda.</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Obsrevaciones -->
+                                <div class="col-md-2">
+                                  <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                      tipoCliente === 'Juridico'
+                                        ? 'col-sm-7 col-form-label required'
+                                        : 'col-sm-6 col-form-label'
+                                    ">Observaciones:</label>
+                                  <textarea title="Observaciones" placeholder="Observaciones"
+                                    formControlName="observaciones" class="form-control my-2" [class.is-invalid]="
+                                      components().controls[componentIndex].get(
+                                        'observaciones'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('observaciones')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('observaciones')!.touched)
+                                    ">
+                                  </textarea>
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'observaciones'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('observaciones')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('observaciones')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('observaciones')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>
+                                        Especifique una observación válida.
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Banco -->
+                                <div class="col-md-2">
+                                  <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                      tipoCliente === 'Juridico'
+                                        ? 'col-sm-6 col-form-label required'
+                                        : 'col-sm-6 col-form-label'
+                                    ">Banco:</label>
+                                  <input type="text" title="Banco" placeholder="Banco" formControlName="banco"
+                                    class="form-control my-2" [class.is-invalid]="
+                                      components().controls[componentIndex].get(
+                                        'banco'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('banco')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('banco')!.touched)
+                                    " />
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'banco'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('banco')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('banco')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('banco')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>Especifique un Banco válido.</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Sucursal -->
+                                <div class="col-md-2">
+                                  <label [hidden]="componentIndex > 0" for="inputEmail3" [ngClass]="
+                                      tipoCliente === 'Juridico'
+                                        ? 'col-sm-6 col-form-label required'
+                                        : 'col-sm-6 col-form-label'
+                                    ">Sucursal:</label>
+                                  <input type="text" title="Sucursal" placeholder="Sucursal" formControlName="sucursal"
+                                    class="form-control my-2" [class.is-invalid]="
+                                      components().controls[componentIndex].get(
+                                        'sucursal'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('sucursal')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('sucursal')!.touched)
+                                    " />
+                                  <!-- Validation section -->
+                                  <div *ngIf="
+                                      components().controls[componentIndex].get(
+                                        'sucursal'
+                                      )!.invalid &&
+                                      (components().controls[
+                                        componentIndex
+                                      ].get('sucursal')!.dirty ||
+                                        components().controls[
+                                          componentIndex
+                                        ].get('sucursal')!.touched)
+                                    " class="alert">
+                                    <!-- Invalid date validation message -->
+                                    <div *ngIf="
+                                        components().controls[
+                                          componentIndex
+                                        ].get('sucursal')!.errors
+                                      "></div>
+                                    <br />
+                                    <!-- Required validation message -->
+                                    <div
+                                      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center justifiedText"
+                                      role="alert">
+                                      <i class="bx bxs-error-circle"></i>
+                                      <div>
+                                        Especifique una sucursal válida.
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Delete button -->
+                                <div class="col-md-1">
+                                  <div *ngIf="componentIndex > 0">
+                                    <button type="button" kunTooltip="Eliminar" kunTooltipPlacement="top"
+                                      class="btn btn-sm btn-square btn-neutral text-danger-hover">
+                                      <i class="bi bi-trash" (click)="onRemoveRow(componentIndex)"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- </tr> -->
+                            </tr>
+                          </div>
+
+                          <!-- </tbody>
+                          </table> -->
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="h-100 d-flex align-items-center justify-content-center">
+                          <a class="btn btn-primary btn-sm active mcard wallet" data-toggle="tooltip"
+                            data-container="body" kunTooltip="Crear otro grupo de Datos Bancarios"
+                            kunTooltipPlacement="top" role="button" (click)="
+                              onAddRow(
+                                '',
+                                '',
+                                [{ id: 0, descripcion: 'USD' }],
+                                '',
+                                '',
+                                ''
+                              )
+                            "><mat-icon>add</mat-icon></a>
+                        </div>
+                      </div>
+                      <!-- <pre>{{ componentForm.value | json }}</pre> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button title="Salvar datos" class="btn btn-primary" type="submit" [disabled]="componentForm.invalid">
+            <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+            Salvar
+          </button>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #templateDatosBancarios>
+    <div class="modal-contentDatosBancarios">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <!-- <i class="bx bx-pie-chart-alt icon"></i> -->
+          <div [innerHTML]="titleCuentasBancariasModal"></div>
+        </h4>
+
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="
+            listadoCuentasBancariasAsignadosModal.length > 0;
+            else elseTemplate
+          ">
+          <mat-list>
+            <div mat-subheader><strong>Listado:</strong></div>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngFor="
+                let item of listadoCuentasBancariasAsignadosModal
+                  | paginate
+                    : {
+                        itemsPerPage: 5,
+                        currentPage: pModalCuentasBancarias,
+                        id: 'pModalPermisos'
+                      }
+              ">
+              <mat-icon matListIcon>label</mat-icon>
+              <div matLine>
+                <strong> Cuenta Bancaria:</strong>
+                {{ item.cuentaBancaria | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Titular: </strong> {{ item.titular | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Moneda: </strong>
+                {{ item.monedas.descripcion | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Banco: </strong> {{ item.nombreBanco | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Sucursal: </strong> {{ item.sucursal | titlecase }}
+              </div>
+            </mat-list-item>
+          </mat-list>
+          <br />
+          <div class="d-flex justify-content-center">
+            <pagination-controls previousLabel="Anterior" nextLabel="Siguiente"
+              (pageChange)="pModalCuentasBancarias = $event" id="pModalPermisos">
+            </pagination-controls>
+          </div>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="row">
+            <div class="col">
+              <img src="../../../../assets/images/search_no.1ddc8c4.jpg" alt="" width="250" height="250" />
+            </div>
+            <div class="col">
+              El cliente <strong>{{ selectedClient.name }}</strong> no tiene
+              asignado ningún dato bancario.
+              <!-- El rol <strong>{{ selectedRol.name }}</strong> no tiene asignado
+            ningún permiso -->
+              <!-- , para modificar este estado clic en el siguiente boton -->
+              <!-- <button
+            class="btn-primary"
+            (click)="openModal(template, selectedRol)"
+          >
+            Asignar permiso
+          </button> -->
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #templateUsuariosAsociados>
+    <div class="modal-contentDatosBancarios">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <!-- <i class="bx bx-pie-chart-alt icon"></i> -->
+          <div [innerHTML]="titleUsuariosAsociadosModal"></div>
+        </h4>
+
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="listadoUsuariosAsociadosModal.length > 0; else elseTemplate">
+          <mat-list>
+            <div mat-subheader><strong>Listado:</strong></div>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngFor="
+                let item of listadoUsuariosAsociadosModal
+                  | paginate
+                    : {
+                        itemsPerPage: 5,
+                        currentPage: pModalUsuariosAsociados,
+                        id: 'pModalUsuariosAsociados'
+                      }
+              ">
+              <mat-icon matListIcon>label</mat-icon>
+              <div matLine>
+                <strong> Usuario:</strong>
+                {{ item.username | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Correo electrónico: </strong>
+                {{ item.email | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Estado: </strong>
+                {{ item.inuse === 1 ? "Habilitado" : "Deshabilitado" }}
+              </div>
+            </mat-list-item>
+          </mat-list>
+          <br />
+          <div class="d-flex justify-content-center">
+            <pagination-controls previousLabel="Anterior" nextLabel="Siguiente"
+              (pageChange)="pModalUsuariosAsociados = $event" id="pModalUsuariosAsociados">
+            </pagination-controls>
+          </div>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="row">
+            <div class="col">
+              <img src="../../../../assets/images/search_no.1ddc8c4.jpg" alt="" width="250" height="250" />
+            </div>
+            <div class="col">
+              El cliente <strong>{{ selectedClient.name }}</strong> no tiene
+              asignado ningún usuario.
+              <!-- , para modificar este estado clic en el siguiente boton -->
+              <!-- <button
+            class="btn-primary"
+            (click)="openModal(template, selectedRol)"
+          >
+            Asignar permiso
+          </button> -->
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #templateCertificadosAsociados>
+    <div class="modal-contentDatosBancarios">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <!-- <i class="bx bx-pie-chart-alt icon"></i> -->
+          <div [innerHTML]="titleCertificadosAsociadosModal"></div>
+        </h4>
+
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="
+            listadoCertificadosAsociadosModal.length > 0;
+            else elseTemplate
+          ">
+          <mat-list>
+            <div mat-subheader><strong>Listado:</strong></div>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngFor="
+                let item of listadoCertificadosAsociadosModal
+                  | paginate
+                    : {
+                        itemsPerPage: 4,
+                        currentPage: pModalCertificadosAsociados,
+                        id: 'pModalCertificadosAsociados'
+                      }
+              ">
+              <mat-icon matListIcon>label</mat-icon>
+              <div matLine>
+                <strong> Nombre:</strong>
+                {{ item.descriptive_name | titlecase }}
+              </div>
+              <div matLine>
+                <strong> Certificado Id: </strong>
+                {{ item.certificate_id | titlecase }}
+              </div>
+            </mat-list-item>
+          </mat-list>
+          <br />
+          <div class="d-flex justify-content-center">
+            <pagination-controls previousLabel="Anterior" nextLabel="Siguiente"
+              (pageChange)="pModalCertificadosAsociados = $event" id="pModalCertificadosAsociados">
+            </pagination-controls>
+          </div>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="row">
+            <div class="col">
+              <img src="../../../../assets/images/search_no.1ddc8c4.jpg" alt="" width="250" height="250" />
+            </div>
+            <div class="col">
+              El cliente <strong>{{ selectedClient.name }}</strong> no tiene
+              asignado ningún certificado.
+              <!-- , para modificar este estado clic en el siguiente boton -->
+              <!-- <button
+            class="btn-primary"
+            (click)="openModal(template, selectedRol)"
+          >
+            Asignar permiso
+          </button> -->
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+</div>

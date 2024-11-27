@@ -1,0 +1,21 @@
+@import '../../../theme/colors.scss';
+
+.custom-icons {
+  font-size: 3rem;
+}
+
+.error-icon {
+  color: $red;
+}
+
+.success-icon {
+  color: darken($color: $primary, $amount: 20);
+}
+
+.alert-icon {
+  color: $yellow;
+}
+
+.cuatom_dialog_row {
+  min-width: 20rem;
+}

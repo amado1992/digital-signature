@@ -1,0 +1,72 @@
+<!-- <p>validation-messages works!</p> -->
+<div
+  *ngIf="
+    (form.controls[this.fieldToValidate].invalid &&
+      form.controls[this.fieldToValidate].dirty) ||
+    form.controls[this.fieldToValidate].touched
+  "
+>
+  <!-- Validación para mostrar mensaje requerido -->
+  <div
+    *ngIf="form.controls[this.fieldToValidate].errors?.['required']"
+    [ngClass]="form.controls[this.fieldToValidate].errors?.['required'] ? 'show-calendar':'hide-calendar'"
+  >
+    <div
+      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <i class="bx bxs-error-circle"></i>
+      <div>{{ this.msgRequired }}</div>
+    </div>
+  </div>
+  <!-- Validación para mostrar mensaje de patrón de expresión regular -->
+  <div
+    *ngIf="form.controls[this.fieldToValidate].errors?.['pattern']"
+    [ngClass]="form.controls[this.fieldToValidate].errors?.['pattern'] ? 'show-calendar':'hide-calendar'"
+  >
+    <div
+      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <i class="bx bxs-error-circle"></i>
+      <div>{{ this.msgPattern }}</div>
+    </div>
+  </div>
+  <!-- Validación para mostrar mensaje de validación de tipo "minLength"-->
+  <div
+    *ngIf="form.controls[this.fieldToValidate].errors?.['minlength']"
+    [ngClass]="form.controls[this.fieldToValidate].errors?.['minlength'] ? 'show-calendar':'hide-calendar'"
+  >
+    <div
+      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <i class="bx bxs-error-circle"></i>
+      <div>{{ this.msgMinLength }}</div>
+    </div>
+  </div>
+  <!-- Validación para mostrar mensaje de validación de tipo "maxLength"-->
+  <div
+    *ngIf="form.controls[this.fieldToValidate].errors?.['maxlength']"
+    [ngClass]="form.controls[this.fieldToValidate].errors?.['maxlength'] ? 'show-calendar':'hide-calendar'"
+  >
+    <div
+      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <i class="bx bxs-error-circle"></i>
+      <div>{{ this.msgMaxLength }}</div>
+    </div>
+  </div>
+  <!-- Validación para mostrar mensaje de validación "incorrect" -->
+  <div *ngIf="form.controls[this.fieldToValidate].errors?.['incorrect']">
+    <div
+      class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <i class="bx bxs-error-circle"></i>
+      <!-- <div>{{ this.msgIncorrect }}</div> -->
+      <div [innerHTML]="this.msgIncorrect"></div>
+    </div>
+  </div>
+</div>

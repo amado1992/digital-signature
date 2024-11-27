@@ -1,0 +1,1036 @@
+<!-- https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/ -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Planes"></app-header>
+
+  <!--<br />
+  <app-loading-panel [bs]="this.service.items" [divListado]="divApiPlanes"></app-loading-panel>
+  <br />-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -20px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Softel" #input>
+    </mat-form-field>
+
+    <div style="margin-bottom: 4px;">
+      <button style="background: #2f46a3;" mat-mini-fab color="primary" (click)="openModal(template, undefined)">
+        <mat-icon style="color: #fff;" aria-label="Crear">add</mat-icon>
+      </button>
+    </div>
+
+    <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="nombre">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre:</span>
+          {{ valueRow.nombre }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="cantidadFirmas">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Límite de firmas</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Límite de firma:</span>
+          {{ valueRow.cantidadFirmas }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="costo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Costo</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Costo:</span>
+          {{ valueRow.costo }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="activo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Estado:</span>
+          <span class="badge badge-lg badge-dot">
+            <i [class]="valueRow.activo === 1 || valueRow.activo === true ? 'bg-success ' : 'bg-danger'"></i>
+            <a>
+              {{ valueRow.activo === 1 || valueRow.activo === true ? "Habilitado" : "Deshabilitado" }}
+            </a>
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="cantidad_certificados">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Límite de certificados</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Límite de certificados:</span>
+          {{ valueRow.cantidad_certificados != null ? valueRow.cantidad_certificados : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Descripción:</span>
+          {{ valueRow.descripcion }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="mobile-label">Acciones:</span>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" class="tight-menu">
+            <button mat-menu-item (click)="openModal(template, element)"
+              matTooltip="No se puede editar este plan porque tiene asociado clientes." matTooltipPosition="after"
+              [matTooltipDisabled]="element.clients != undefined ? !element.clients.length : true"
+              [disabled]="element.clients != undefined ? (!element.clients.length ? false : true) : true"
+              *ngIf="element.clients != undefined">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+          
+            <button mat-menu-item (click)="deletedItem(element)"
+              matTooltip="No se puede eliminar este plan porque tiene asociado clientes." matTooltipPosition="after"
+              [matTooltipDisabled]="element.clients != undefined ? !element.clients.length : true"
+              [disabled]="element.clients != undefined ? (!element.clients.length ? false : true) : true">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          
+            <button mat-menu-item (click)="NavigateToDetalles(element)">
+              <mat-icon>remove_red_eye</mat-icon>
+              <span>Detalles</span>
+            </button>
+          
+            <button mat-menu-item (click)="openModalAssociationDialog(element)"
+              matTooltip="No se puede asociar clientes a este plan porque se encuentra deshabilitado" matTooltipPosition="after"
+              [matTooltipDisabled]="element.activo" [disabled]="!element.activo">
+              <mat-icon>link</mat-icon>
+              <span>Asociar clientes a este plan</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de planes">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+
+  <ng-template #divApiPlanes>
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <a
+              class="btn btn-primary btn-lg active mcard wallet"
+              role="button"
+              kunTooltip="Crear nuevo plan"
+              kunTooltipPlacement="top"
+              aria-pressed="true"
+              (click)="openModal(template, undefined)"
+              ><mat-icon>add</mat-icon></a
+            >
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control form-control-placeholdericon"
+                id="search-text"
+                aria-describedby="search-text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar plan..."
+                autofocus
+              />
+              <!-- <i class="fa fa-search"></i> -->
+            </div>
+          </div>
+        </div>
+        <hr />
+        <ng-container
+          *ngIf="(service.items | async)?.length == 0; else elseTemplate"
+        >
+          <app-no-data-found item="Plan"></app-no-data-found>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="card shadow border-0 mb-7">
+            <div class="card-header">
+              <h5 class="mb-0">Listado</h5>
+            </div>
+            <div class="table-responsive">
+              <!-- <button (click)="addItem()">Add Item</button>
+          <div *ngFor="let item of service.items | async">
+            - {{ item.name }}
+          </div> -->
+              <!-- Listado de Planes -->
+              <app-mat-reusable-table
+                [tableData]="this.planesList"
+                [tableColumns]="this.planesTableColumns"
+                [isFilterable]="true"
+                [isPageable]="true"
+                [paginationSizes]="[2, 4, 6, 8, 10]"
+                [defaultPageSize]="8"
+                [filter]="searchText"
+                itemsPerPageLabel="Clientes por página:"
+                [rowActionIcon]="'remove_shopping_cart'"
+                [BasicPlanIcon]="true"
+                [AsociarIcon]="true"
+                (asociarAction)="
+                  openModalAssociationDialog($event)
+                "
+                (deleteAction)="deletedItem($event)"
+                (editAction)="openModal(template, $event)"
+                (detallesPlanAction)="NavigateToDetalles($event)"
+              ></app-mat-reusable-table>
+
+              <br />
+              <!-- <div class="d-flex justify-content-center">
+                <pagination-controls
+                  previousLabel="Anterior"
+                  nextLabel="Siguiente"
+                  (pageChange)="p = $event"
+                  id="p"
+                >
+                </pagination-controls>
+              </div> -->
+            </div>
+            <!-- <div class="card-footer border-0 py-5">
+          <span class="text-muted text-sm"
+            >Showing 10 items out of 250 results found</span
+          >
+        </div> -->
+          </div>
+        </ng-template>
+      </div>
+    </main>
+  </ng-template>
+
+  <ng-template #template>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        <i class="bx bx-pie-chart-alt icon"></i>
+        {{ form.value.id !== null ? "Modificar plan" : "Adicionar nuevo plan" }}
+      </h4>
+
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form" (ngSubmit)="SaveChanges()">
+        <!-- Nombre -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Nombre:</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="text"
+              title="Nombre"
+              placeholder="Nombre"
+              class="form-control my-2"
+              (keyup)="checkNombreAvailability($event)"
+              formControlName="nombre"
+              [class.is-invalid]="
+                form.controls['nombre'].invalid &&
+                (form.controls['nombre'].dirty ||
+                  form.controls['nombre'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="nombre"
+            msgRequired="El campo Nombre es requerido."
+            msgPattern="Valor no permitido para este campo."
+            [msgIncorrect]="this.nombreFieldErrorMsg"
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['nombre'].invalid &&
+              (form.controls['nombre'].dirty || form.controls['nombre'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div [innerHTML]="nombreFieldErrorMsg"></div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Duracion -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Duración (meses):</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="number"
+              title="Duración"
+              min="1"
+              max="99"
+              (keydown)="avoidDotCharacter($event)"
+              (keyup)="avoidDotCharacter($event)"
+              placeholder="Duración del plan"
+              class="form-control my-2"
+              formControlName="duracion"
+              [class.is-invalid]="
+                form.controls['duracion'].invalid &&
+                (form.controls['duracion'].dirty ||
+                  form.controls['duracion'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="duracion"
+            msgRequired="El campo Duración es requerido."
+            msgPattern="Este campo solamente permite valores enteros hasta 2 dígitos."
+            msgMaxLength="Longitug mala"
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['duracion'].invalid &&
+              (form.controls['duracion'].dirty ||
+                form.controls['duracion'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Duración requerido</div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Límite de firmas -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Límite de Firmas:</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="number"
+              min="1"
+              max="1000"
+              (keydown)="avoidDotCharacter($event)"
+              (keyup)="avoidDotCharacter($event)"
+              title="Cantidad de Firmas"
+              placeholder="Límite de Firmas"
+              class="form-control my-2"
+              formControlName="cantidadFirmas"
+              [class.is-invalid]="
+                form.controls['cantidadFirmas'].invalid &&
+                (form.controls['cantidadFirmas'].dirty ||
+                  form.controls['cantidadFirmas'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="cantidadFirmas"
+            msgRequired="El campo Cantidad de Firmas es requerido."
+            msgPattern="Este campo solamente permite valores enteros hasta 2 dígitos."
+            msgMaxLength="Longitug mala"
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['cantidadFirmas'].invalid &&
+              (form.controls['cantidadFirmas'].dirty ||
+                form.controls['cantidadFirmas'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Cantidad de Firmas requerido</div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Límite de certificados -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Límite de certificados:</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="number"
+              min="1"
+              max="1000000000000"
+              (keydown)="avoidDotCharacter($event)"
+              (keyup)="avoidDotCharacter($event)"
+              title="cantCertificados"
+              placeholder="Límite de certificados"
+              class="form-control my-2"
+              formControlName="cantCertificados"
+              [class.is-invalid]="
+                form.controls['cantCertificados'].invalid &&
+                (form.controls['cantCertificados'].dirty ||
+                  form.controls['cantCertificados'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="cantCertificados"
+            msgRequired="El campo Límite de certificados es requerido."
+            msgPattern="Este campo solamente permite valores enteros hasta 2 dígitos."
+            msgMaxLength="Longitug mala"
+            msgMinLength="Longitug mala"
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['cantCertificados'].invalid &&
+              (form.controls['cantCertificados'].dirty ||
+                form.controls['cantCertificados'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Límite de certificados requerido</div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Inicio -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Inicio:</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="date"
+              title="Fecha de alta"
+              (keydown)="$event.preventDefault()"
+              placeholder="Fecha de alta"
+              formControlName="inicio"
+              [class.is-invalid]="
+                form.controls['inicio'].invalid &&
+                (form.controls['inicio'].dirty ||
+                  form.controls['inicio'].touched)
+              "
+              class="form-control my-2"
+            />
+          </div>
+          <div
+            *ngIf="
+              form.controls['inicio'].invalid &&
+              (form.controls['inicio'].dirty || form.controls['inicio'].touched)
+            "
+            class="alert"
+          >
+            <!-- Invalid date validation message -->
+            <div *ngIf="form.controls['inicio'].errors">
+              <div
+                class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                role="alert"
+              >
+                <i class="bx bxs-error-circle"></i>
+                {{ form.controls["inicio"].errors["invalidDate"] }}
+              </div>
+            </div>
+            <br />
+            <!-- Required validation message -->
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Seleccione una fecha de inicio válida</div>
+            </div>
+          </div>
+        </div>
+        <!-- Costo -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-5 col-form-label required"
+            >Costo:</label
+          >
+          <div class="col-sm-7">
+            <input
+              type="number"
+              pattern="^\d*(\.\d{0,2})?$"
+              min="1"
+              max="1000000000000"
+              title="Costo"
+              placeholder="Costo"
+              class="form-control my-2"
+              formControlName="costo"
+              [class.is-invalid]="
+                form.controls['costo'].invalid &&
+                (form.controls['costo'].dirty || form.controls['costo'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="costo"
+            msgRequired="El campo Costo es requerido."
+            msgPattern="Este campo solamente permite 2 valores decimales."
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['costo'].invalid &&
+              (form.controls['costo'].dirty || form.controls['costo'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Costo requerido</div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Tipo de Pago -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-5 col-form-label required"
+            >Tipo de Pago:</label
+          >
+          <div class="col-sm-7">
+            <ng-multiselect-dropdown
+              [placeholder]="'...Seleccione...'"
+              [settings]="dropdownSettings"
+              [data]="dropdownListTiposPago"
+              [(ngModel)]="selectedItemsTiposPago"
+              formControlName="tiposPago"
+              (onSelect)="onItemSelect($event)"
+              (onDeSelect)="onItemDeSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+              (onDeSelectAll)="onItemDeSelectAll($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+        <!-- Monedas -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-5 col-form-label required"
+            >Moneda:</label
+          >
+          <div class="col-sm-7">
+            <ng-multiselect-dropdown
+              [placeholder]="'...Seleccione...'"
+              [settings]="dropdownSettings"
+              [data]="dropdownListMonedas"
+              [(ngModel)]="selectedItemsMonedas"
+              formControlName="moneda"
+              (onSelect)="onItemSelectMoneda($event)"
+              (onDeSelect)="onItemDeSelectMoneda($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+        <!-- Descripcion -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-5 col-form-label required"
+            >Descripción:</label
+          >
+          <div class="col-sm-7">
+            <textarea
+              title="descripcion"
+              class="form-control my-2"
+              placeholder="Descripción"
+              formControlName="descripcion"
+              [class.is-invalid]="
+                form.controls['descripcion'].invalid &&
+                (form.controls['descripcion'].dirty ||
+                  form.controls['descripcion'].touched)
+              "
+            >
+            </textarea>
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="descripcion"
+            msgRequired="El campo Descripción es requerido."
+            msgPattern="Valor no permitido para este campo."
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['descripcion'].invalid &&
+              (form.controls['descripcion'].dirty ||
+                form.controls['descripcion'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Especifique una descripción</div>
+            </div>
+          </div> -->
+        </div>
+        <!--  -->
+        <div class="row">
+          <!-- Estado -->
+          <div class="col">
+            <div class="form-check">
+              <div class="col-sm-1">
+                <input
+                  type="checkbox"
+                  (change)="onNativeChange($event)"
+                  [checked]="isChecked"
+                  [(ngModel)]="isChecked"
+                  class="form-check-input"
+                  id="estado"
+                  formControlName="estado"
+                />
+              </div>
+              <label for="inputEmail33" class="col-sm-12 form-check-label"
+                >Plan Activo</label
+              >
+            </div>
+          </div>
+          <!-- Tipo de Plan -->
+          <div class="col">
+            <div class="form-check">
+              <div class="col-sm-1">
+                <input
+                  type="checkbox"
+                  (change)="onNativeChangeTipoPlan($event)"
+                  [checked]="isCheckedTipoPlan"
+                  [(ngModel)]="isCheckedTipoPlan"
+                  class="form-check-input"
+                  id="tipoPlan"
+                  formControlName="tipoPlan"
+                />
+              </div>
+              <label for="inputEmail33" class="col-sm-12 form-check-label"
+                >Aplica Cliente API</label
+              >
+            </div>
+          </div>
+          <!-- Natural o Jurídico -->
+          <div class="col">
+            <div class="form-check">
+              <div class="col-sm-1">
+                <input
+                  type="checkbox"
+                  (change)="onNativeChangeTipoPlanNatural($event)"
+                  [checked]="isCheckedTipoPlanNatural"
+                  [(ngModel)]="isCheckedTipoPlanNatural"
+                  class="form-check-input"
+                  id="tipoPlanNatural"
+                  formControlName="tipoPlanNatural"
+                />
+              </div>
+              <label for="inputEmail33" class="col-sm-12 form-check-label"
+                >Aplica Cliente Natural</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <br />
+        <button
+          title="Salvar datos"
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="form.invalid"
+        >
+          <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+          Salvar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #templateAsociarPlanCliente>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <i class="bx bx-pie-chart-alt icon"></i>
+          {{ titleAsociacionModal }}
+        </h4>
+
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          aria-label="Close"
+          (click)="modalRef?.hide()"
+        >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <form
+            [formGroup]="formAsociar"
+            (ngSubmit)="SaveChagesAsociar(idPlanModal)"
+          >
+            <div class="container">
+              <div class="row">
+                <strong>Detalles de Plan</strong>
+                <!-- Div detalles -->
+                <div class="col-lg-66">
+                  <table
+                    mat-table
+                    [dataSource]="dataSourcePlan"
+                    class="mat-elevation-z8"
+                  >
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="nombre">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.nombre }}</td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="duracion">
+                      <th mat-header-cell *matHeaderCellDef>Duración</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.duracion | pluralSingular : "mes" : "meses" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="inicio">
+                      <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.inicio | date : "dd/MM/yyyy" : "" : "en" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="costo">
+                      <th mat-header-cell *matHeaderCellDef>Costo</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.costo | currency }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="estado">
+                      <th mat-header-cell *matHeaderCellDef>Estado</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.estado ? "Habilitado" : "Deshabilitado" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="pago">
+                      <th mat-header-cell *matHeaderCellDef>Pago</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.pago }}</td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="moneda">
+                      <th mat-header-cell *matHeaderCellDef>Moneda</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.moneda }}</td>
+                    </ng-container>
+
+                    <!-- Aplica Cliente Api Column -->
+                    <ng-container matColumnDef="clienteApi">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Aplica Cliente API
+                      </th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.tipoPlan ? "Si" : "No" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Tipo Plan Column -->
+                    <ng-container matColumnDef="tipoPlanNatural">
+                      <th mat-header-cell *matHeaderCellDef>Tipo de Plan</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{
+                          plan.tipoPlanNatural === true ? "Natural" : "Jurídico"
+                        }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="limite">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Límite de certificados
+                      </th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.limite }}</td>
+                    </ng-container>
+
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="displayedColumnsPlan"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: displayedColumnsPlan"
+                    ></tr>
+                  </table>
+                  <br />
+                </div>
+                <!-- <form [formGroup]="formAsociar" (ngSubmit)="SaveChages()"> -->
+                <!-- Div reactive form -->
+                <!-- <div class="container"> -->
+                <br />
+                <strong>Cliente a asociar</strong>
+                <!-- Conditional div -->
+                <ng-container
+                  *ngIf="
+                    (this.service.itemsClientes$ | async)?.length === 0 ||
+                      !viewDropdown;
+                    else elseTemplate
+                  "
+                >
+                  <app-no-data-found item="Cliente"></app-no-data-found>
+                  <!-- <p
+                    class="h-100 d-flex align-items-center justify-content-center"
+                  >
+                    ,de este modo podrá proceder con la asociación entre Planes
+                    ,Clientes y Certificados.
+                  </p> -->
+                  <p
+                    class="h-100 d-flex align-items-center justify-content-center"
+                  >
+                    O todos los clientes existentes, ya han sido asociados a
+                    este plan.
+                  </p>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <div class="row align-items-center">
+                    <div class="col-sm">
+                      <div class="col-form-label">
+                        <ng-multiselect-dropdown
+                          [placeholder]="'...Seleccione...'"
+                          [settings]="dropdownSettingsClientes"
+                          [data]="dropdownListClientes"
+                          [(ngModel)]="selectedItemCliente"
+                          formControlName="clienteId"
+                          (onSelect)="onItemSelectCliente($event)"
+                          (onDeSelect)="onItemDeSelectCliente($event)"
+                        >
+                        </ng-multiselect-dropdown>
+                      </div>
+                    </div>
+                    <!-- <div><br /></div> -->
+                    <div class="col-sm">
+                      <!-- <input type="file" #file style="display: none" /> -->
+                      <button
+                        type="button"
+                        class="btn btn-primary file-upload-button"
+                        id="imp"
+                        kunTooltip="Importar certificados"
+                        kunTooltipPlacement="right"
+                        (click)="impCertificados()"
+                        [disabled]="disableImp"
+                      >
+                        Importar certificados
+                        <input
+                          type="file"
+                          #fileInput
+                          [multiple]="
+                            planAsociar.tipoPlanNatural ? false : true
+                          "
+                          (change)="
+                            onFileSelect(fileInput, limiteCertificadosModal)
+                          "
+                        />
+                      </button>
+
+                      <span class="file-info" style="margin-left: 10px">{{
+                        fileInfo
+                      }}</span>
+                      <br />
+                    </div>
+                  </div>
+                </ng-template>
+                <!-- </div> -->
+                <br />
+                <div class="container">
+                  <div class="row g-3 align-items-center">
+                    <!-- <span class="file-info">{{ fileInfo }}</span>
+                    <br /> -->
+                    <div
+                      id="loading"
+                      [hidden]="hiddenLoading"
+                      style="text-align: center"
+                    >
+                      <!-- <p class="loadingspinner"></p> -->
+                      <!-- <img
+                        src="../../../../assets/gifs/3d6aa9082f3c9e285df9970dc7b762ac.gif"
+                        alt=""
+                        width="180"
+                        height="180px"
+                      /> -->
+                      <div class="lds-ellipsis">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                      <p class="file-info">
+                        Obteniendo información de certificados
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="container">
+                  <div class="row" [hidden]="hiddenTableCertificados">
+                    <strong>Listado de certificados a asociar</strong>
+                    <div class="example-header">
+                      <br />
+                      <input
+                        type="text"
+                        class="form-control form-control-placeholdericon"
+                        id="search-text1"
+                        aria-describedby="search-text1"
+                        (keyup)="applyFilter($event)"
+                        placeholder="Buscar certificado..."
+                        autofocus
+                        #input
+                      />
+                    </div>
+                    <br />
+                    <div id="data">
+                      <br />
+                      <div>
+                        <mat-table
+                          [dataSource]="dataSourceCertificados"
+                          class="mat-elevation-z8"
+                        >
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>
+                              Nombre y Apellidos
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                              {{ element.name | titlecase }}
+                            </td>
+                          </ng-container>
+
+                          <!-- Certificate Id Column -->
+                          <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef>
+                              Id de Certificado
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                              {{ element.certificate_id }}
+                            </td>
+                          </ng-container>
+
+                          <mat-header-row
+                            *matHeaderRowDef="displayedColumns"
+                          ></mat-header-row>
+                          <mat-row
+                            *matRowDef="let row; columns: displayedColumns"
+                            matRipple
+                            class="element-row"
+                          >
+                          </mat-row>
+                          <!-- Row shown when there is no matching data. -->
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">
+                              No se encontraron datos para el filtro "{{
+                                input.value
+                              }}"
+                            </td>
+                          </tr>
+                        </mat-table>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- *ngIf="dataSourceCertificados.data.length > 0"
+                    [length]="dataSourceCertificados.data.length" -->
+                  <div [hidden]="hiddenTableCertificados">
+                    <!-- <mat-paginator
+                      [length]="
+                        dataSourceCertificados.data
+                          ? dataSourceCertificados.data.length
+                          : 0
+                      "
+                      #paginator
+                      [pageSize]="3"
+                      [pageSizeOptions]="[3, 5]"
+                      showFirstLastButtons
+                    ></mat-paginator> -->
+                  </div>
+                </div>
+                <!-- div save button -->
+                <div class="col-lg-8">
+                  <br />
+                  <button
+                    title="Salvar datos"
+                    class="btn btn-primary"
+                    type="submit"
+                    [disabled]="formAsociarValid"
+                  >
+                    <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+                    Salvar
+                  </button>
+                </div>
+                <!-- </form> -->
+                <!-- <div class="col-lg-2">
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+              </div> -->
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+          <button
+            title="Salvar datos"
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="formAsociarValid"
+          >
+            <img src="../../../../assets/icons/save-44-32.png" alt="" />
+            Salvar cambios
+          </button>
+        </div> -->
+    </div>
+  </ng-template>
+</div>

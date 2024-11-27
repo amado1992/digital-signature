@@ -1,0 +1,215 @@
+<h2 mat-dialog-title>{{ titleAsociacionModal }}</h2>
+
+<form [formGroup]="formAsociar" (ngSubmit)="SaveChagesAsociar(idPlanModal)">
+<mat-dialog-content>
+  <div style="height: 450px !important;">
+      <div class="container">
+        <div class="row">
+          <strong style="margin-bottom: 10px;">Detalles de Plan</strong>
+          <div class="col-12">
+            <table mat-table [dataSource]="dataSourcePlan" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let plan">{{ plan.nombre }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="duracion">
+                <th mat-header-cell *matHeaderCellDef>Duración</th>
+                <td mat-cell *matCellDef="let plan">
+                  {{ plan.duracion | pluralSingular : "mes" : "meses" }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="inicio">
+                <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+                <td mat-cell *matCellDef="let plan">
+                  {{ plan.inicio | date : "dd/MM/yyyy" : "" : "en" }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="costo">
+                <th mat-header-cell *matHeaderCellDef>Costo</th>
+                <td mat-cell *matCellDef="let plan">
+                  {{ plan.costo | currency }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef>Estado</th>
+                <td mat-cell *matCellDef="let plan">
+                  {{ plan.estado ? "Habilitado" : "Deshabilitado" }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="pago">
+                <th mat-header-cell *matHeaderCellDef>Pago</th>
+                <td mat-cell *matCellDef="let plan">{{ plan.pago }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="moneda">
+                <th mat-header-cell *matHeaderCellDef>Moneda</th>
+                <td mat-cell *matCellDef="let plan">{{ plan.moneda }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="clienteApi">
+                <th mat-header-cell *matHeaderCellDef>
+                  Aplica Cliente API
+                </th>
+                <td mat-cell *matCellDef="let plan">
+                  {{ plan.tipoPlan ? "Si" : "No" }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="tipoPlanNatural">
+                <th mat-header-cell *matHeaderCellDef>Tipo de Plan</th>
+                <td mat-cell *matCellDef="let plan">
+                  {{
+                  plan.tipoPlanNatural === true ? "Natural" : "Jurídico"
+                  }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="limite">
+                <th mat-header-cell *matHeaderCellDef>
+                  Límite de certificados
+                </th>
+                <td mat-cell *matCellDef="let plan">{{ plan.limite }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsPlan"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsPlan"></tr>
+            </table>
+            <br />
+          </div>
+          <br />
+          <strong>Cliente a asociar</strong>
+          <ng-container *ngIf="
+                  (this.service.itemsClientes$ | async)?.length === 0 ||
+                    !viewDropdown;
+                  else elseTemplate
+                ">
+            <app-no-data-found item="Cliente"></app-no-data-found>
+            <p class="h-100 d-flex align-items-center justify-content-center">
+              O todos los clientes existentes, ya han sido asociados a
+              este plan.
+            </p>
+          </ng-container>
+          <ng-template #elseTemplate>
+            <div class="row align-items-center">
+              <div class="col-sm">
+                <div class="col-form-label">
+                  <ng-multiselect-dropdown [placeholder]="'...Seleccione...'" [settings]="dropdownSettingsClientes"
+                    [data]="dropdownListClientes" [(ngModel)]="selectedItemCliente" formControlName="clienteId"
+                    (onSelect)="onItemSelectCliente($event)" (onDeSelect)="onItemDeSelectCliente($event)">
+                  </ng-multiselect-dropdown>
+                </div>
+              </div>
+              <div class="col-sm">
+                <button type="button" class="btn btn-primary file-upload-button" id="imp"
+                  kunTooltip="Importar certificados" kunTooltipPlacement="right" (click)="impCertificados()"
+                  [disabled]="disableImp">
+                  Importar certificados
+                  <input type="file" #fileInput [multiple]="
+                          planAsociar.tipoPlanNatural ? false : true
+                        " (change)="
+                          onFileSelect(fileInput)
+                        " />
+                </button>
+
+                <span class="file-info" style="margin-left: 10px">{{
+                  fileInfo
+                  }}</span>
+                <br />
+              </div>
+            </div>
+          </ng-template>
+          <br />
+          <div class="container">
+            <div class="row g-3 align-items-center">
+
+              <div id="loading" [hidden]="hiddenLoading" style="text-align: center">
+                <div class="lds-ellipsis">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+                <p class="file-info">
+                  Obteniendo información de certificados
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row" [hidden]="hiddenTableCertificados">
+              <strong>Listado de certificados a asociar</strong>
+              <div class="example-header">
+                <br />
+                <input type="text" class="form-control form-control-placeholdericon" id="search-text1"
+                  aria-describedby="search-text1" (keyup)="applyFilter($event)" placeholder="Buscar certificado..."
+                  autofocus #input />
+              </div>
+              <br />
+              <div id="data">
+                <br />
+                <div>
+                  <mat-table [dataSource]="dataSourceCertificados" class="mat-elevation-z8"
+                    style="overflow: hidden !important;">
+
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Nombre y Apellidos
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        {{ element.name | titlecase }}
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Id de Certificado
+                      </th>
+                      <td mat-cell *matCellDef="let element">
+                        {{ element.certificate_id }}
+                      </td>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns" matRipple class="element-row">
+                    </mat-row>
+                    <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell" colspan="4">
+                        No se encontraron datos para el filtro "{{
+                        input.value
+                        }}"
+                      </td>
+                    </tr>
+                  </mat-table>
+
+                  <mat-paginator [pageSizeOptions]="[10, 20, 100]" showFirstLastButtons
+                    aria-label="Select page of certificates">
+                  </mat-paginator>
+
+                </div>
+              </div>
+            </div>
+            <div [hidden]="hiddenTableCertificados">
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="align-right custom-mat-dialog-actions">
+  <button type="submit" mat-raised-button color="primary" [disabled]="formAsociarValid" style="background: #2f46a3;">
+    <mat-icon aria-label="Save" style="color: white;">save</mat-icon>
+    Guardar
+  </button>
+  <button style="margin-right: 10px;" mat-raised-button color="warn" (click)="cancel()" mat-dialog-close>
+    <mat-icon aria-label="Cancel" style="color: white;">cancel</mat-icon>
+    Cancelar
+  </button>
+</mat-dialog-actions>
+</form>

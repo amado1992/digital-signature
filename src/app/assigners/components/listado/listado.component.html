@@ -1,0 +1,132 @@
+<!-- https://mdbootstrap.com/docs/angular/components/collapse/ -->
+
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Permisos"></app-header>
+
+  <!--<app-loading-panel
+    [bs]="permisosService.itemsPermisos"
+    [divListado]="divPermisos"
+  ></app-loading-panel>-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -54px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Validar certificado" #input>
+    </mat-form-field>
+
+    <mat-table matSort [dataSource]="dataSourcePermisos" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="nombre">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre:</span>
+          {{ valueRow.nombre }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="operationType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Ruta</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Ruta:</span>
+          {{ valueRow.operationType }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="avaliable">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Estado:</span>
+          <span class="badge badge-lg badge-dot">
+            <i [class]="valueRow.avaliable === 1 || valueRow.avaliable === true ? 'bg-success ' : 'bg-danger'"></i>
+            <a>
+              {{ valueRow.avaliable === 1 || valueRow.avaliable === true ? "Habilitado" : "Deshabilitado" }}
+            </a>
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Descripción:</span>
+          {{ valueRow.descripcion }}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de planes">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+  <!-- <div
+    *ngIf="!(permisosService.itemsPermisos | async); else divPermisos"
+    class="container"
+  >
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div> -->
+  <!-- https://blog.bitsrc.io/3-ways-to-debounce-http-requests-in-angular-c407eb165ada -->
+
+  <br />
+  <ng-template #divPermisos>
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <app-filter-box
+          [isBtnVisible]="false"
+          placeholder="Buscar permiso..."
+          (onKeyUp)="keyupHandler($event)"
+        ></app-filter-box>
+
+        <div>
+          <ng-container
+            *ngIf="
+              (permisosService.itemsPermisos | async)?.length! > 0;
+              else elseTemplate
+            "
+          >
+            <div class="card shadow border-0 mb-7">
+              <div class="card-header">
+                <h5 class="mb-0">Listado</h5>
+              </div>
+              <!-- Listado de Permisos -->
+              <app-mat-reusable-table
+                [tableData]="this.orders"
+                [tableColumns]="ordersTableColumns"
+                [isFilterable]="true"
+                [isPageable]="true"
+                [paginationSizes]="[2, 4, 6, 8, 10]"
+                [defaultPageSize]="8"
+                [filter]="searchText"
+                itemsPerPageLabel="Permisos por página:"
+              ></app-mat-reusable-table>
+            </div>
+          </ng-container>
+        </div>
+        <ng-template #elseTemplate>
+          <app-no-data-found item="Permiso"></app-no-data-found>
+        </ng-template>
+      </div>
+    </main>
+  </ng-template>
+</div>

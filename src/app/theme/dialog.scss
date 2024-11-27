@@ -1,0 +1,4 @@
+
+.custom-dialog > * {
+  background: linear-gradient(135deg, $primary, lighten($color: $primary, $amount: 20));
+}

@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col">
+    <ng-container *ngIf="isBtnVisible">
+      <a
+        class="btn btn-primary btn-lg active"
+        role="button"
+        aria-pressed="true"
+        (click)="printValue"
+        ><mat-icon>add</mat-icon></a
+      >
+    </ng-container>
+  </div>
+  <div class="col">
+    <div class="form-group">
+      <input
+        type="text"
+        autocomplete="off"
+        (keyup)="emiteTerminoFromInput()"
+        class="form-control form-control-placeholdericon"
+        id="search-text"
+        aria-describedby="search-text"
+        [(ngModel)]="searchText"
+        [placeholder]="placeholder"
+        autofocus
+        #input
+      />
+    </div>
+  </div>
+</div>
+<hr />

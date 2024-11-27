@@ -1,0 +1,133 @@
+// @import url("https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css");
+// @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+// @import "material-icons/iconfont/material-icons.css";
+//Importamos el estilo correspondiente con el loading de cada request
+// @import "../../../../lds-ellipsis.css";
+
+/* Estilo centralizado para todas las etiquetas "h5" utilizadas en los listados del sistema */
+h5,
+.h5 {
+    font-size: 1rem;
+}
+
+h5,
+.h5 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #16192c;
+}
+
+.mat-icon {
+    color: #16192c;
+}
+
+td {
+    white-space: normal !important;
+    word-wrap: break-word;
+}
+
+table {
+    table-layout: fixed;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+        padding: 0;
+}
+
+// .form-control-placeholdericon {
+//     font-family: Roboto, FontAwesome, 'Material Icons';
+// }
+
+.required:before {
+    content: " * ";
+    color: red;
+}
+
+.standard:before {
+    content: " * ";
+    color: white;
+}
+
+//https: //stackoverflow.com/questions/5235142/how-do-i-disable-the-resizable-property-of-a-textarea
+textarea {
+    resize: none;
+}
+
+//https: //stackoverflow.com/questions/68726750/is-it-posible-to-have-last-column-sticky-in-a-table-with-pure-css
+table thead th:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background-color: #f5f9fc;
+    color: #525f7f
+}
+
+table tbody td:last-child {
+    /* Displayed on top of other rows when scrolling */
+    z-index: 9999;
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background-color: #f5f9fc;
+    color: #525f7f
+}
+
+#add-search {
+    position: absolute;
+    right: 24px;
+}
+
+#clear-icon {
+    cursor: pointer;
+}
+
+.mobile-label {
+    display: none;
+}
+
+@media(max-width: 901px) {
+    .mobile-label {
+        width: 80px;
+        display: inline-block;
+        font-weight: bold;
+    }
+
+    .mat-header-row {
+        display: none;
+    }
+
+    .mat-row {
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 24px;
+    }
+
+    .firt-cell {
+        padding-left: 0px;
+    }
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 25%;
+}
+
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: #2f46a3;
+}
+
+

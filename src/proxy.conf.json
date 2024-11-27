@@ -1,0 +1,6 @@
+{
+"/DigitalSignatureRestApi": {
+"target": "https://localhost:8074",
+"secure": false
+}
+}

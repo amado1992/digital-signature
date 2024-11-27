@@ -1,0 +1,180 @@
+<!-- <p>profile works!</p> -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Perfil de usuario "></app-header>
+
+  <div class="container">
+    <div class="row g-3 align-items-center">
+      <div id="loading" [hidden]="hiddenLoading" style="text-align: center">
+        <div class="lds-ellipsis">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section
+    [hidden]="!hiddenLoading"
+    class="section about-section py-6 bg-surface-secondary"
+    id="about"
+  >
+    <div class="container">
+      <div class="row align-items-center flex-row-reverse">
+        <div class="col-lg-6">
+          <div class="about-text go-to">
+            <h3 class="dark-color">{{ this.username | titlecase }}</h3>
+            <hr class="hr" />
+            <!-- <h6 class="theme-color lead">
+              A Lead UX &amp; UI designer based in Canada
+            </h6> -->
+            <p>
+              Rol: <mark>{{ this.rol[0].name }}</mark>
+              {{ this.rol[0].description }}
+            </p>
+            <!-- New UI variation -->
+            <div class="row about-list">
+              <!-- Estado -->
+              <div class="col-md-6">
+                <div class="media">
+                  <label>Estado</label>
+                  <p>
+                    <span class="badge badge-lg badge-dot">
+                      <!-- <i class="bg-success"></i>{{ item.enabled }} -->
+                      <i
+                        [class]="state === 1 ? 'bg-success ' : 'bg-danger'"
+                      ></i>
+                      <a>
+                        {{ state === 1 ? "Habilitado" : "Deshabilitado" }}
+                      </a>
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="media">
+                  <label>E-mail</label>
+                  <p>{{ this.email }}</p>
+                </div>
+              </div>
+            </div>
+            <!-- Hidden makes the element invisible, but stills reserves the space. -->
+            <div [style.visibility]="isAdminUser ? 'hidden' : 'visible'">
+              <div class="row about-list" *ngIf="this.client !== null">
+                <div class="col-md-6">
+                  <div class="media">
+                    <label>Cliente</label>
+                    <p>{{ this.client!.name }}</p>
+                  </div>
+                  <div class="media">
+                    <label>País</label>
+                    <p>
+                      {{ this.client.country }}
+                    </p>
+                  </div>
+                  <div class="media">
+                    <label>Teléfono</label>
+                    <p>{{ this.client.contactPhone }}</p>
+                  </div>
+                  <div class="media">
+                    <label>Descripción</label>
+                    <p>{{ this.client.description }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="media">
+                    <label>Tipo</label>
+                    <p>
+                      {{
+                        this.client.institutional === true
+                          ? "Jurídico"
+                          : "Natural"
+                      }}
+                    </p>
+                  </div>
+                  <div class="media">
+                    <label>Provincia</label>
+                    <p>{{ this.client.province }}</p>
+                  </div>
+                  <div class="media">
+                    <label>Dirección</label>
+                    <p>{{ this.client.address }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 align-items-center text-center">
+          <div class="about-avatar">
+            <img
+              src="../../../../assets/icons/img_569204.png"
+              width="45%"
+              height="45%"
+              title=""
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="counter">
+        <div class="row">
+          <!-- Planes de este cliente (cliente asociado a usuario que inició sesión) -->
+          <div
+            class="col-6 col-lg-3"
+            *ngIf="this.service.items$ | async; let list"
+          >
+            <div class="count-data text-center">
+              <h5>
+                {{ list.length }}
+              </h5>
+              <h3>Planes</h3>
+            </div>
+          </div>
+          <!-- Cuentas Bancarias de este cliente (cliente asociado a usuario que inició sesión) -->
+          <div
+            class="col-6 col-lg-3"
+            *ngIf="this.service.clientDetails$ | async; let details"
+          >
+            <div class="count-data text-center">
+              <h5>
+                {{
+                  details.datosBancariosDtoList
+                    ? details.datosBancariosDtoList.length
+                    : "0"
+                }}
+              </h5>
+              <h3>Cuentas Bancarias</h3>
+            </div>
+          </div>
+          <!-- Certificados de este cliente (cliente asociado a usuario que inició sesión) -->
+          <div
+            class="col-6 col-lg-3"
+            *ngIf="this.service.clientDetails$ | async; let details"
+          >
+            <div class="count-data text-center">
+              <h5>
+                {{ details.certificados ? details.certificados.length : "0" }}
+              </h5>
+              <h3>Certificados</h3>
+            </div>
+          </div>
+          <!-- Clientes API de este cliente (cliente asociado a usuario que inició sesión) -->
+          <div
+            class="col-6 col-lg-3"
+            *ngIf="this.service.clientDetails$ | async; let details"
+          >
+            <div class="count-data text-center">
+              <h5>
+                {{ details.clientesApi ? details.clientesApi.length : "0" }}
+              </h5>
+              <h3>Clientes API</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

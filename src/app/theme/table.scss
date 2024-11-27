@@ -1,0 +1,41 @@
+@import './colors.scss';
+
+table {
+  overflow-y: hidden;
+}
+
+// .table-content se coloca en el contenedor de la tabla para lomitar el tamaño de la misma a 50vh
+.table-content {
+  max-height: 50vh;
+}
+
+// .table-fixhead se coloca en el contenedor de la tabla para fijar la cabecera
+.table-fixhead thead th {
+  position: sticky; top: 0; z-index: 1;
+  background-color: #fefefe;
+}
+
+// .body-elements se coloca en los tr del body de la tabla darle el color primario y resaltar las filas
+// por donde pase el mouse
+.body-elements  {
+  background-color: $primary;
+  cursor: pointer;
+
+  &:hover {
+    background-color: lighten($color: $primary, $amount: 10) !important;
+  }
+}
+
+.body-elements > * {
+  background-color: transparent
+}
+
+//  .hover-cell se coloca en tr del body si queremos resaltar las celdas de la tabla cuando
+// pase el mouse por arriba
+.hover-cell > td  {
+
+  &:hover {
+    border: 1px solid darken($color: $primary, $amount: 20);
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  }
+}

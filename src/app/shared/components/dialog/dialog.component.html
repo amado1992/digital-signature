@@ -1,0 +1,24 @@
+<div class="row cuatom_dialog_row">
+  <div class="col-12">
+    <p class="text-center">
+
+      <span [ngSwitch]="data.type">
+
+      <i *ngSwitchCase="'success'" class="bi bi-exclamation-circle custom-icons success-icon"></i>
+      <i *ngSwitchCase="'error'" class="bi bi-exclamation-octagon custom-icons error-icon"></i>
+      <i *ngSwitchCase="'alert'" class="bi bi-exclamation-triangle custom-icons alert-icon"></i>
+      <i *ngSwitchCase="'dialog'" class="bi bi-info-circle custom-icons"></i>
+
+      </span>
+
+    </p>
+    <h1 class="white-titles-middle">{{ data.header }}</h1>
+    <p *ngFor="let txt of body" class="text-white">{{ txt }}</p>
+  </div>
+
+  <div class="col-12 text-center mt-3">
+    <button (click)="close( true )" class="btn btn-secondary mx-2">{{ acceptButton }}</button>
+    <button (click)="close( false )" *ngIf="data.type === 'dialog'" class="btn btn-grey mx-2">{{ cancelButton }}</button>
+  </div>
+
+</div>

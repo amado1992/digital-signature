@@ -1,0 +1,746 @@
+<!-- https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/ -->
+<!-- https://www.angularjswiki.com/angular/angular-material-icons-list-mat-icon-list/ -->
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Planes por Cliente"></app-header>
+
+  <br />
+  <!-- <div
+    *ngIf="!(this.service.items$ | async); else divApiPlanes"
+    class="container"
+  >
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div> -->
+  <app-loading-panel
+    [bs]="this.service.items"
+    [divListado]="divApiPlanes"
+  ></app-loading-panel>
+
+  <br />
+
+  <ng-template #divApiPlanes>
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <!-- <a
+              class="btn btn-primary btn-lg active mcard wallet"
+              role="button"
+              kunTooltip="Crear nuevo plan"
+              kunTooltipPlacement="top"
+              aria-pressed="true"
+              (click)="openModal(template, undefined)"
+              >+</a
+            > -->
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control form-control-placeholdericon"
+                id="search-text"
+                aria-describedby="search-text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar plan..."
+                autofocus
+              />
+              <!-- <i class="fa fa-search"></i> -->
+            </div>
+          </div>
+        </div>
+        <hr />
+        <ng-container
+          *ngIf="(service.items | async)?.length == 0; else elseTemplate"
+        >
+          <div
+            id="loading"
+            style="text-align: center"
+            class="animate__animated animate__fadeIn animate__faster"
+          >
+            <img
+              src="../../../../assets/images/search_no.1ddc8c4.jpg"
+              alt=""
+              width="250px"
+              height="250px"
+            />
+            <br />
+            <br />
+            <div class="alert alert-info" role="alert">
+              <a class="alert-link"
+                >No existe ningún Plan creado/asociado para este cliente.</a
+              >
+              <br />
+              <a class="alert-link"
+                >Para crear/asociar un plan con su cliente, póngase en contacto
+                con el administrador del sistema.</a
+              >
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="card shadow border-0 mb-7">
+            <div class="card-header">
+              <h5 class="mb-0">Listado</h5>
+            </div>
+            <div class="table-responsive">
+              <!-- <button (click)="addItem()">Add Item</button>
+          <div *ngFor="let item of service.items | async">
+            - {{ item.name }}
+          </div> -->
+              <table class="table table-hover table-nowrap">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" style="font-weight: bold">Nombre</th>
+                    <th scope="col" style="font-weight: bold">Duración</th>
+                    <th scope="col" style="font-weight: bold">
+                      Límite de Firmas
+                    </th>
+                    <th scope="col" style="font-weight: bold">Fecha Inicio</th>
+                    <th scope="col" style="font-weight: bold">Costo</th>
+                    <th scope="col" style="font-weight: bold">Estado</th>
+                    <th scope="col" style="font-weight: bold">
+                      Aplica Cliente API
+                    </th>
+                    <th scope="col" style="font-weight: bold">Tipo Plan</th>
+                    <th scope="col" style="font-weight: bold">Tipo de Pago</th>
+                    <th scope="col" style="font-weight: bold">Moneda</th>
+                    <th scope="col" style="font-weight: bold">
+                      Límite de Certificados
+                    </th>
+                    <th scope="col" style="font-weight: bold">Descripción</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    class="myDIV"
+                    *ngFor="
+                      let item of service.items
+                        | async
+                        | filter : searchText
+                        | paginate
+                          : { itemsPerPage: 5, currentPage: p, id: 'p' }
+                    "
+                  >
+                    <!-- Nombre col -->
+                    <td>
+                      <a
+                        [routerLink]="['/dashboard/plan/detalles', item.id]"
+                        class="text-heading font-semibold"
+                        [innerHTML]="item.nombre | highlight : searchText"
+                      >
+                      </a>
+                    </td>
+                    <!-- Duración col -->
+                    <td width="50px">
+                      <!-- <i
+                    class="bx bx-pie-chart-alt icon avatar avatar-xs rounded-circle me-2"
+                  ></i> -->
+                      <a
+                        width="50px"
+                        class="text-heading font-semibold word-wrap"
+                        [innerHTML]="
+                          item.duracion
+                            | highlight : searchText
+                            | pluralSingular : 'mes' : 'meses'
+                        "
+                      >
+                      </a>
+                    </td>
+                    <!-- Cantidad Firmas col -->
+                    <td style="text-align: center">
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="
+                          item.cantidadFirmas | highlight : searchText
+                        "
+                      >
+                      </a>
+                    </td>
+                    <!-- Fecha Inicio col -->
+                    <td
+                      style="
+                        word-wrap: break-word;
+                        min-width: 160px;
+                        max-width: 160px;
+                      "
+                      [innerHTML]="
+                        item.inicio | date : 'dd/MM/yyyy' : '' : 'en'
+                      "
+                    ></td>
+                    <!-- Costo col -->
+                    <td>
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="
+                          item.costo | currency | highlight : searchText
+                        "
+                      >
+                      </a>
+                    </td>
+                    <!-- Estado col -->
+                    <td>
+                      <span class="badge badge-lg badge-dot">
+                        <i
+                          [class]="
+                            item.activo === true ? 'bg-success ' : 'bg-danger'
+                          "
+                        ></i>
+                        <a
+                          class="text-heading font-semibold"
+                          [innerHTML]="
+                            item.activo === true
+                              ? 'Habilitado'
+                              : 'Deshabilitado'
+                          "
+                        >
+                        </a>
+                      </span>
+                    </td>
+                    <!-- Aplica Cliente API col -->
+                    <td style="text-align: center">
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="item.tipoPlan === true ? 'Si' : 'No'"
+                      >
+                      </a>
+                    </td>
+                    <!-- Tipo Plan col -->
+                    <td style="text-align: center">
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="
+                          item.tipoPlanNatural === true ? 'Natural' : 'Jurídico'
+                        "
+                      >
+                      </a>
+                    </td>
+                    <!-- Pago col -->
+                    <td>
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="item.tipoPago | highlight : searchText"
+                      >
+                      </a>
+                    </td>
+                    <!-- Moneda col -->
+                    <td style="text-align: center">
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="item.monedas | highlight : searchText"
+                      >
+                      </a>
+                    </td>
+                    <!-- Cantidad de Certificados col -->
+                    <td style="text-align: center">
+                      <a
+                        class="text-heading font-semibold"
+                        [innerHTML]="
+                          item.cantidad_certificados | highlight : searchText
+                        "
+                      >
+                      </a>
+                    </td>
+                    <!-- Descripcion -->
+                    <td
+                      width="250px"
+                      class="word-wrap"
+                      [innerHTML]="item.descripcion | highlight : searchText"
+                    ></td>
+                    <td class="only-show-on-hover">
+                      <button
+                        mat-icon-button
+                        style="
+                          border-radius: 6px;
+                          border-style: solid;
+                          border: 2px;
+                          border-color: #2f46a3;
+                          background-color: #2f46a3;
+                        "
+                        [matMenuTriggerFor]="menu"
+                        aria-label="Example icon-button with a menu"
+                      >
+                        <mat-icon style="color: white">more_vert</mat-icon>
+                      </button>
+                      <mat-menu #menu="matMenu" class="tight-menu">
+                        <button
+                          mat-menu-item
+                          matTooltip="No se puede asociar clientes a este plan porque se encuentra deshabilitado"
+                          [matTooltipDisabled]="item.activo"
+                          [disabled]="!item.activo"
+                          (click)="
+                            openModalAsociacion(
+                              templateAsociarPlanCliente,
+                              item
+                            )
+                          "
+                        >
+                          <mat-icon>link</mat-icon>
+                          <span>Asociar clientes a este plan</span>
+                        </button>
+                        <!-- <span
+                          matTooltip="No se puede editar este plan porque tiene asociado clientes."
+                          matTooltipPosition="before"
+                          [matTooltipDisabled]="!item.clients.length"
+                        >
+                          <button
+                            mat-menu-item
+                            [disabled]="!item.clients.length ? false : true"
+                            (click)="openModal(template, item)"
+                          >
+                            <mat-icon>edit</mat-icon>
+                            <span>Editar este plan</span>
+                          </button>
+                        </span> -->
+                        <!-- <span
+                          matTooltip="No se puede eliminar este plan porque tiene asociado clientes."
+                          matTooltipPosition="before"
+                          [matTooltipDisabled]="!item.clients.length"
+                        >
+                          <button
+                            mat-menu-item
+                            [disabled]="!item.clients.length ? false : true"
+                            (click)="deletedItem(item)"
+                          >
+                            <mat-icon>delete</mat-icon>
+                            <span>Eliminar este plan</span>
+                          </button>
+                        </span> -->
+                      </mat-menu>
+                      <!-- <span
+                      [kunTooltip]="
+                        item.activo
+                          ? 'Asociar clientes a este plan'
+                          : 'No se puede asociar clientes a este plan porque se encuentra deshabilitado'
+                      "
+                    >
+                      <button
+                        type="button"
+                        [disabled]="!item.activo"
+                        class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                      >
+                        <i
+                          class="bx bx-link"
+                          (click)="
+                            openModalAsociacion(
+                              templateAsociarPlanCliente,
+                              item
+                            )
+                          "
+                          kunTooltipPlacement="top"
+                        ></i>
+                      </button>
+                    </span>
+                    <span
+                      [kunTooltip]="
+                        item.clients.length > 0
+                          ? 'No se puede editar este plan porque tiene asociado clientes'
+                          : 'Editar este plan'
+                      "
+                    >
+                      <button
+                        type="button"
+                        [disabled]="!item.clients.length ? false : true"
+                        class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                      >
+                        <i
+                          class="bi bi-pencil"
+                          (click)="openModal(template, item)"
+                          kunTooltipPlacement="top"
+                        ></i>
+                      </button>
+                    </span>
+                    <span
+                      [kunTooltip]="
+                        item.clients.length > 0
+                          ? 'No se puede eliminar este plan porque tiene asociado clientes'
+                          : 'Eliminar este plan'
+                      "
+                    >
+                      <button
+                        type="button"
+                        [disabled]="!item.clients.length ? false : true"
+                        kunTooltipPlacement="top"
+                        class="btn btn-sm btn-square btn-neutral text-danger-hover"
+                      >
+                        <i class="bi bi-trash" (click)="deletedItem(item)"></i>
+                      </button>
+                    </span> -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <br />
+              <div class="d-flex justify-content-center">
+                <pagination-controls
+                  previousLabel="Anterior"
+                  nextLabel="Siguiente"
+                  (pageChange)="p = $event"
+                  id="p"
+                >
+                </pagination-controls>
+              </div>
+            </div>
+            <!-- <div class="card-footer border-0 py-5">
+          <span class="text-muted text-sm"
+            >Showing 10 items out of 250 results found</span
+          >
+        </div> -->
+          </div>
+        </ng-template>
+      </div>
+    </main>
+  </ng-template>
+
+  <ng-template #templateAsociarPlanCliente>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">
+          <i class="bx bx-pie-chart-alt icon"></i>
+          {{ titleAsociacionModal }}
+        </h4>
+
+        <button
+          type="button"
+          class="btn-close close pull-right"
+          aria-label="Close"
+          (click)="modalRef?.hide()"
+        >
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <form
+            [formGroup]="formAsociar"
+            (ngSubmit)="SaveChagesAsociar(idPlanModal)"
+          >
+            <div class="container">
+              <div class="row">
+                <strong>Detalles de Plan</strong>
+                <!-- Div detalles -->
+                <div class="col-lg-66">
+                  <table
+                    mat-table
+                    [dataSource]="dataSourcePlan"
+                    class="mat-elevation-z8"
+                  >
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="nombre">
+                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.nombre }}</td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="duracion">
+                      <th mat-header-cell *matHeaderCellDef>Duración</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.duracion | pluralSingular : "mes" : "meses" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="inicio">
+                      <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.inicio | date : "dd/MM/yyyy" : "" : "en" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="costo">
+                      <th mat-header-cell *matHeaderCellDef>Costo</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.costo | currency }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="estado">
+                      <th mat-header-cell *matHeaderCellDef>Estado</th>
+                      <td mat-cell *matCellDef="let plan">
+                        <span class="badge badge-lg badge-dot">
+                          <i
+                            [class]="
+                              plan.estado === true ? 'bg-success ' : 'bg-danger'
+                            "
+                          ></i>
+                          <a>
+                            {{ plan.estado ? "Habilitado" : "Deshabilitado" }}
+                          </a>
+                        </span>
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="pago">
+                      <th mat-header-cell *matHeaderCellDef>Pago</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.pago }}</td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="moneda">
+                      <th mat-header-cell *matHeaderCellDef>Moneda</th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.moneda }}</td>
+                    </ng-container>
+
+                    <!-- Aplica Cliente Api Column -->
+                    <ng-container matColumnDef="clienteApi">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Aplica Cliente API
+                      </th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{ plan.tipoPlan ? "Si" : "No" }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Tipo Plan Column -->
+                    <ng-container matColumnDef="tipoPlanNatural">
+                      <th mat-header-cell *matHeaderCellDef>Tipo de Plan</th>
+                      <td mat-cell *matCellDef="let plan">
+                        {{
+                          plan.tipoPlanNatural === true ? "Natural" : "Jurídico"
+                        }}
+                      </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="limite">
+                      <th mat-header-cell *matHeaderCellDef>
+                        Límite de certificados
+                      </th>
+                      <td mat-cell *matCellDef="let plan">{{ plan.limite }}</td>
+                    </ng-container>
+
+                    <tr
+                      mat-header-row
+                      *matHeaderRowDef="displayedColumnsPlan"
+                    ></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: displayedColumnsPlan"
+                    ></tr>
+                  </table>
+                  <br />
+                </div>
+                <!-- <form [formGroup]="formAsociar" (ngSubmit)="SaveChages()"> -->
+                <!-- Div reactive form -->
+                <!-- <div class="container"> -->
+                <br />
+                <div matLine>
+                  <strong>Cliente a asociar: {{ clienteAsociar }}</strong>
+                </div>
+                <div>
+                  <br />
+                  <div class="row align-items-center">
+                    <!-- <div class="col-sm">
+                      <div class="col-form-label">
+                        <ng-multiselect-dropdown
+                          [placeholder]="'...Seleccione...'"
+                          [settings]="dropdownSettingsClientes"
+                          [data]="dropdownListClientes"
+                          [(ngModel)]="selectedItemCliente"
+                          formControlName="clienteId"
+                          (onSelect)="onItemSelectCliente($event)"
+                          (onDeSelect)="onItemDeSelectCliente($event)"
+                        >
+                        </ng-multiselect-dropdown>
+                      </div>
+                    </div> -->
+                    <!-- {{ clienteAsociar }} -->
+                    <!-- <div><br /></div> -->
+                    <div class="col-sm">
+                      <!-- <input type="file" #file style="display: none" /> -->
+                      <button
+                        type="button"
+                        class="btn btn-primary file-upload-button"
+                        id="imp"
+                        kunTooltip="Importar certificados"
+                        kunTooltipPlacement="right"
+                        (click)="impCertificados()"
+                      >
+                        Importar certificados
+                        <input
+                          type="file"
+                          #fileInput
+                          [multiple]="
+                            planAsociar.tipoPlanNatural ? false : true
+                          "
+                          (change)="
+                            onFileSelect(fileInput, limiteCertificadosModal)
+                          "
+                        />
+                      </button>
+
+                      <span class="file-info" style="margin-left: 10px">{{
+                        fileInfo
+                      }}</span>
+                      <br />
+                    </div>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <br />
+                <div class="container">
+                  <div class="row g-3 align-items-center">
+                    <!-- <span class="file-info">{{ fileInfo }}</span>
+                    <br /> -->
+                    <div
+                      id="loading"
+                      [hidden]="hiddenLoading"
+                      style="text-align: center"
+                    >
+                      <!-- <p class="loadingspinner"></p> -->
+                      <!-- <img
+                        src="../../../../assets/gifs/3d6aa9082f3c9e285df9970dc7b762ac.gif"
+                        alt=""
+                        width="180"
+                        height="180px"
+                      /> -->
+                      <div class="lds-ellipsis">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                      <p class="file-info">
+                        Obteniendo información de certificados
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="container">
+                  <div class="row" [hidden]="hiddenTableCertificados">
+                    <strong>Listado de certificados a asociar</strong>
+                    <div class="example-header">
+                      <input
+                        type="text"
+                        class="form-control form-control-placeholdericon"
+                        id="search-text1"
+                        aria-describedby="search-text1"
+                        (keyup)="applyFilter($event)"
+                        placeholder="Buscar certificado..."
+                        autofocus
+                        #input
+                      />
+                    </div>
+                    <br />
+                    <div id="data">
+                      <br />
+                      <div>
+                        <mat-table
+                          [dataSource]="dataSourceCertificados"
+                          class="mat-elevation-z8"
+                        >
+                          <!-- Name Column -->
+                          <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>
+                              Nombre y Apellidos
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                              {{ element.name | titlecase }}
+                            </td>
+                          </ng-container>
+
+                          <!-- Certificate Id Column -->
+                          <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef>
+                              Id de Certificado
+                            </th>
+                            <td mat-cell *matCellDef="let element">
+                              {{ element.certificate_id }}
+                            </td>
+                          </ng-container>
+
+                          <mat-header-row
+                            *matHeaderRowDef="displayedColumns"
+                          ></mat-header-row>
+                          <mat-row
+                            *matRowDef="let row; columns: displayedColumns"
+                            matRipple
+                            class="element-row"
+                          >
+                          </mat-row>
+                          <!-- Row shown when there is no matching data. -->
+                          <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">
+                              No se encontraron datos para el filtro "{{
+                                input.value
+                              }}"
+                            </td>
+                          </tr>
+                        </mat-table>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- *ngIf="dataSourceCertificados.data.length > 0"
+                    [length]="dataSourceCertificados.data.length" -->
+                  <div [hidden]="hiddenTableCertificados">
+                    <!-- <mat-paginator
+                      [length]="
+                        dataSourceCertificados.data
+                          ? dataSourceCertificados.data.length
+                          : 0
+                      "
+                      #paginator
+                      [pageSize]="3"
+                      [pageSizeOptions]="[3, 5]"
+                      showFirstLastButtons
+                    ></mat-paginator> -->
+                  </div>
+                </div>
+                <!-- div save button -->
+                <div class="col-lg-8">
+                  <br />
+                  <button
+                    title="Salvar datos"
+                    class="btn btn-primary"
+                    type="submit"
+                    [disabled]="formAsociarValid"
+                  >
+                    <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+                    Salvar
+                  </button>
+                </div>
+                <!-- </form> -->
+                <!-- <div class="col-lg-2">
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+                <div
+                  class="col-lg-4 col-md-6 col-sm-6 col-xs-12 green text-center"
+                >
+                  test
+                </div>
+              </div> -->
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+          <button
+            title="Salvar datos"
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="formAsociarValid"
+          >
+            <img src="../../../../assets/icons/save-44-32.png" alt="" />
+            Salvar cambios
+          </button>
+        </div> -->
+    </div>
+  </ng-template>
+</div>

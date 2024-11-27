@@ -1,0 +1,332 @@
+@import "../../../../lds-ellipsis.css";
+
+/* Estilo centralizado para todas las etiquetas "h5" utilizadas en los listados del sistema */
+h5,
+.h5 {
+    font-size: 1rem;
+}
+
+h5,
+.h5 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #16192c;
+}
+
+.mat-icon {
+    color: #16192c;
+}
+
+/*.mat-table {
+    overflow-x: scroll;
+}
+
+.mat-cell,
+.mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 10px;
+    line-break: unset;
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+}*/
+
+/*
+.mat-column-nombre {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-duracion {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-inicio {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-costo {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-estado {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-pago {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+.mat-column-clienteApi {
+    width: 11%;
+    text-align: center;
+    padding-left: 16px;
+}
+
+.mat-column-tipoPlanNatural {
+    width: 11%;
+    text-align: left;
+    padding-left: 16px;
+}
+.mat-column-moneda {
+    width: 10%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-limite {
+    width: 10%;
+    text-align: center;
+    padding-left: 16px;
+}
+
+.mat-column-name {
+    width: 50%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-column-id {
+    width: 50%;
+    text-align: left;
+    padding-left: 16px;
+}
+
+.mat-row,
+.mat-header-row {
+    display: table-row;
+}
+
+th.mat-header-cell {
+    text-align: left !important;
+    font-weight: bold;
+}*/
+
+.modal-content {
+    border: 0;
+    border-radius: 0.75rem;
+    position: relative;
+    flex-direction: column;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    vertical-align: middle; //centered screen
+    display: inline-block;
+    margin-right: 20px;
+    position: fixed;
+    top: 10%;
+    left: 18.5%;
+    z-index: 1050;
+    width: 81%;
+    height: auto;
+    margin-left: -10%;
+    outline: 0;
+    overflow: auto; //autoscroll
+}
+
+
+.modal-center-override {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    -webkit-transform: translateY(-50%) !important;
+    -moz-transform: translateY(-50%) !important;
+    -o-transform: translateY(-50%) !important;
+}
+
+.modal-dialog-asociacion {
+    max-width: 800px;
+    margin: 1.75rem auto;
+}
+
+.app-modal-window .modal-dialog {
+    width: 800px;
+}
+
+.required:before {
+    content: " * ";
+    color: red;
+}
+
+
+//https: //stackblitz.com/edit/angular-file-upload-button?file=src%2Fapp%2Ffile-upload-button%2Ffile-upload-button.component.scss
+.file-upload-button {
+    overflow: hidden;
+    position: relative;
+
+    &::after {
+        content: '⇪';
+        color: #fff;
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    input[type="file"] {
+        font-size: 100px;
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+    }
+}
+
+.file-info {
+    color: #999;
+    font-family: Lato;
+    margin-left: 0.5rem;
+}
+
+//https: //stackoverflow.com/questions/68726750/is-it-posible-to-have-last-column-sticky-in-a-table-with-pure-css
+table thead th:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background-color: #f5f9fc;
+    color: #525f7f
+}
+
+table tbody td:last-child {
+    /* Displayed on top of other rows when scrolling */
+    z-index: 9999;
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background-color: #f5f9fc;
+    color: #525f7f
+}
+
+.btn:disabled {
+    pointer-events: none;
+}
+
+button:disabled {
+    pointer-events: none;
+}
+
+//Para aplicar scroll a div contenedor de certificados públicos de clientes
+#data {
+    margin-top: 15px;
+    overflow-x: hidden;
+    overflow-y: visible;
+    height: 80px;
+}
+
+.table-responsive {
+    margin-top: -15px;
+}
+
+.word-wrap {
+    word-wrap: normal;
+    word-break: break-all;
+    white-space: normal;
+    display: block;
+    height: auto;
+    margin: 3px auto;
+    line-height: 1.4;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+//https: //stackoverflow.com/questions/5235142/how-do-i-disable-the-resizable-property-of-a-textarea
+textarea {
+    resize: none;
+}
+
+$mat-row-height: 48px;
+$mat-row-horizontal-padding: 24px;
+
+.subject {
+    flex: 1;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    text-align: left !important;
+    font-weight: bold;
+    background-color: #f5f9fc;
+    color: #525f7f;
+}
+
+::ng-deep .customize {
+    background: red;
+}
+
+
+#add-search {
+    position: absolute;
+    right: 24px;
+}
+
+#clear-icon {
+    cursor: pointer;
+}
+
+.example-loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-label {
+    display: none;
+}
+
+@media(max-width: 901px) {
+    .mobile-label {
+        width: 80px;
+        display: inline-block;
+        font-weight: bold;
+    }
+
+    .mat-header-row {
+        display: none;
+    }
+
+    .mat-row {
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 24px;
+    }
+
+    .firt-cell {
+        padding-left: 0px;
+    }
+}
+
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td,
+th {
+    width: 25%;
+}
+
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: #2f46a3;
+}

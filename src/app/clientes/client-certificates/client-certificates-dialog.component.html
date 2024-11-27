@@ -1,0 +1,134 @@
+<h2 mat-dialog-title>Certificados asociados al cliente <strong>{{this.client == undefined ? "" :
+    this.client.name}}</strong></h2>
+
+<form [formGroup]="associateForm" (ngSubmit)="saveAssignClientToCertificate()">
+  <mat-dialog-content>
+    <mat-card class="py-6 bg-surface-secondary">
+      <mat-card-header>
+        <mat-card-title>Certificados</mat-card-title>
+
+        <span *ngIf="isLoadingResults">
+          <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+        </span>
+      </mat-card-header>
+
+      <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -56px;">
+        <mat-label>Filtrar</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Cliente móvil" #input>
+      </mat-form-field>
+
+      <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)" class="mat-elevation-z8">
+        <ng-container matColumnDef="certificate_id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
+          <mat-cell class="firt-cell" *matCellDef="let valueRow">
+            <span class="mobile-label">Id:</span>
+            {{ valueRow.certificate_id }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="enabled">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+          <mat-cell *matCellDef="let valueRow">
+            <span class="mobile-label">Estado:</span>
+            <span class="badge badge-lg badge-dot">
+              <i [class]="valueRow.enabled === 1 || valueRow.enabled === true ? 'bg-success ' : 'bg-danger'"></i>
+              <a>
+                {{ valueRow.enabled === 1 || valueRow.enabled === true ? "Habilitado" : "Deshabilitado" }}
+              </a>
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="descriptive_name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</mat-header-cell>
+          <mat-cell *matCellDef="let valueRow">
+            <span class="mobile-label">descriptive_name:</span>
+            {{ valueRow.descriptive_name }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+        </tr>
+      </mat-table>
+
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de certificados">
+      </mat-paginator>
+
+      <div class="row">
+        <div class="col-12 mt-3">
+          <button [class.spinner]="hiddenLoading" type="button" class="btn btn-primary file-upload-button" id="fileUploadButton"
+            kunTooltip="Asignar certificados" kunTooltipPlacement="right" [disabled]="hiddenLoading">
+            Asignar certificados
+            <input style="cursor: pointer;" type="file" #fileInput
+              [multiple]="true"
+              (change)="onFileSelect(fileInput)" />
+          </button>
+        </div>
+
+        <br />
+
+        <div class="container" *ngIf="hiddenLoading">
+          <div class="row g-3 align-items-center">
+            <div id="loading" style="text-align: center">
+              <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <p class="file-info">
+                Obteniendo información de certificados
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <mat-table [dataSource]="dataSourceCertificados" class="mat-elevation-z8 mt-2" *ngIf="clientCertificatesInformation.length > 0">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>
+            Nombre
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.name | titlecase }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>
+            Id
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.certificate_id }}
+          </td>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumnsAssignCertificate"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsAssignCertificate" matRipple class="element-row">
+        </mat-row>
+
+      </mat-table>
+
+      <mat-paginator *ngIf="clientCertificatesInformation.length > 0" #paginatorAssignCertificate [pageSizeOptions]="[10, 20, 100]" showFirstLastButtons
+        aria-label="Select page of certificates">
+      </mat-paginator>
+    </mat-card>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="align-right custom-mat-dialog-actions">
+    <button [class.spinner]="hideForm" type="submit" mat-raised-button color="primary" [disabled]="hideForm" style="background: #2f46a3;">
+      <mat-icon aria-label="Save" style="color: white;">save</mat-icon>
+      Guardar
+    </button>
+    <button style="margin-right: 10px;" mat-raised-button color="warn" (click)="cancel()" mat-dialog-close>
+      <mat-icon aria-label="Cancel" style="color: white;">cancel</mat-icon>
+      Cancelar
+    </button>
+  </mat-dialog-actions>
+</form>

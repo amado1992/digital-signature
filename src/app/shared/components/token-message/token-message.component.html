@@ -1,0 +1,54 @@
+<div
+  class="note-token note-warning-token animate__animated animate__fadeIn animate__faster"
+>
+  <div class="swal-icon swal-icon--success">
+    <span
+      class="swal-icon--success__line swal-icon--success__line--long"
+    ></span>
+    <span class="swal-icon--success__line swal-icon--success__line--tip"></span>
+
+    <div class="swal-icon--success__ring"></div>
+    <div class="swal-icon--success__hide-corners"></div>
+  </div>
+  <h2 class="swal2-title">¡Cliente API adicionado!</h2>
+  <br />
+  <p style="text-align: justify; color: black">
+    <strong>Importante:</strong> Este panel contiene el token necesario para que
+    su cliente API <strong>{{ data[1] }}</strong> pueda conectarse con los
+    servicios de eFirma, preste mucha atención y copie este token en algún lugar
+    seguro:
+  </p>
+  <br />
+  <div class="row">
+    <div class="col-sm-10">
+      <pre><code class="language-css word-wrap">{{ data[0] }}</code></pre>
+    </div>
+    <div class="col-sm-2">
+      <button
+        class="btn btn-default"
+        id="copyButton"
+        kunTooltip="Copiar token"
+        kunTooltipPlacement="right"
+        [cdkCopyToClipboard]="data[0]"
+        (click)="cliqboardClicEvent()"
+      >
+        <i class="material-icons">file_copy</i>
+      </button>
+    </div>
+  </div>
+  <br />
+  <div class="button-container">
+    <button
+      type="button"
+      class="btn btn-primary btn-lg"
+      (click)="sbRef.dismiss()"
+      [disabled]="isDisable"
+    >
+      Aceptar
+    </button>
+  </div>
+</div>
+<!-- <button mat-raised-button color="accent" (click)="sbRef.dismiss()">
+  (click)="sbRef.dismiss()"
+  close
+</button> -->

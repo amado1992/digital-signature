@@ -1,0 +1,50 @@
+<div class="container" ng-app="colorApp">
+  <div ng-controller="MainCtrl">
+    <div class="header">
+      <header>
+        <div class="image-text">
+          <span class="image">
+            <img src="../../../../assets/images/logo/Logo.jpeg" alt="Logo" />
+          </span>
+          <div class="text header-text">
+            <span class="name">eFirma</span>
+            <span class="profession"></span>
+          </div>
+        </div>
+      </header>
+      <br />
+    </div>
+
+    <div class="jumbotron">
+      <h2>Completar registro de usuario</h2>
+      <p class="lead">
+        Has llegado hasta esta dirección a través de un correo que recibiste
+        producto del proceso de registro y creación de un nuevo usuario en la
+        plataforma eFirma, para completar este proceso, clic en el siguiente
+        botón.
+      </p>
+      <p>
+        <a class="btn btn-primary btn-lg active mcard wallet" role="button" aria-pressed="true" (click)="confirmEmail()"
+          role="button">
+          Finalizar proceso
+        </a>
+      </p>
+      <div class="card" *ngIf="showError || showSuccess">
+        <div class="card-body">
+          <div *ngIf="showError" class="alert alert-danger" role="alert">
+            <div>
+              Ha ocurrido un error verificando su registro de usuario. Intente
+              nuevamente o contacte con el administrador del sistema.
+            </div>
+          </div>
+          <div *ngIf="showSuccess" class="alert alert-success" role="alert">
+            <span>Bienvenido a Efirma. El registro de usuario se ha realizado satisfactoriamente.</span>
+            <!--<p style="font-size: 1.125rem !important;">Bienvenido a Efirma. El registro de usuario se ha realizado satisfactoriamente.</p>-->
+            <a [routerLink]="['/authentication/login']">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

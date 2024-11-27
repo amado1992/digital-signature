@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<Employee>    
+   <emp>    
+      <id>1</id>    
+      <name>Ajay Rich</name>    
+      <email>therichposts@gmail.com</email>    
+   </emp>    
+   <emp>    
+      <id>2</id>    
+      <name>Jassa Rich</name>    
+      <email>therichposts@gmail.com</email>    
+   </emp>    
+   <emp>    
+      <id>3</id>    
+      <name>Jassa</name>    
+      <email>therichposts@gmail.com</email>    
+   </emp>    
+   <emp>    
+      <id>4</id>    
+      <name>Rich Jassa</name>    
+      <email>therichposts@gmail.com</email>    
+   </emp>    
+   <emp>    
+      <id>5</id>    
+      <name>Jassa Boss</name>       
+      <email>therichposts@gmail.com</email>    
+   </emp>    
+</Employee>   

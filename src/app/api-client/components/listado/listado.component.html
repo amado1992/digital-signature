@@ -1,0 +1,546 @@
+<div class="animate__animated animate__fadeIn animate__faster">
+  <app-header headerText="Clientes API"></app-header>
+  <!--<br />
+  <app-loading-panel
+    [array]="ApiClientList"
+    [divListado]="divApiClients"
+  ></app-loading-panel>-->
+
+  <!-- <div *ngIf="!ApiClientList; else divApiClients" class="container">
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div> -->
+
+  <!--<br/>-->
+
+  <mat-card class="py-6 bg-surface-secondary">
+    <mat-card-header>
+      <mat-card-title>Listado</mat-card-title>
+
+      <span *ngIf="isLoadingResults">
+        <mat-spinner [diameter]="30" *ngIf="isLoadingResults"></mat-spinner>
+      </span>
+    </mat-card-header>
+
+    <mat-form-field appearance="standard" id="add-search" style="max-width: 50%; margin-top: -20px;">
+      <mat-label>Filtrar</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ejemplo. Efirma movil" #input>
+    </mat-form-field>
+
+    <div style="margin-bottom: 4px;">
+      <button style="background: #2f46a3;" mat-mini-fab color="primary" (click)="openModal(template, undefined)">
+        <mat-icon style="color: #fff;" aria-label="Crear">add</mat-icon>
+      </button>
+    </div>
+
+    <mat-table matSort [dataSource]="dataSource" (matSortChange)="sortData($event)">
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell class="firt-cell" *matCellDef="let valueRow">
+          <span class="mobile-label">Nombre:</span>
+          {{ valueRow.name }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="begin_date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de alta</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Fecha de alta:</span>
+          {{ valueRow.begin_date }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="end_date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de baja</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Fecha de baja:</span>
+          {{ valueRow.end_date != null ? valueRow.end_date : "-" }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="enabled">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Estado</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Estado:</span>
+          <span class="badge badge-lg badge-dot">
+            <i [class]="valueRow.enabled === 1 || valueRow.enabled === true ? 'bg-success ' : 'bg-danger'"></i>
+            <a>
+              {{ valueRow.enabled === 1 || valueRow.enabled === true ? "Habilitado" : "Deshabilitado" }}
+            </a>
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</mat-header-cell>
+        <mat-cell *matCellDef="let valueRow">
+          <span class="mobile-label">Observaciones:</span>
+          {{ valueRow.description }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span class="mobile-label">Acciones:</span>
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" class="tight-menu">
+
+            <button mat-menu-item (click)="openModal(template, element)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+
+            <button mat-menu-item (click)="deletedItem(element)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+
+            <button mat-menu-item (click)="asignPemisOpenModal(asignTemplate, element)">
+              <mat-icon>insert_drive_file</mat-icon>
+              <span>Certificados de este cliente</span>
+            </button>
+          </mat-menu>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No hay datos que coincidan con el filtro "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-card-actions>
+      <mat-paginator showFirstLastButtons [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        aria-label="Seleccionar página de planes">
+      </mat-paginator>
+    </mat-card-actions>
+  </mat-card>
+
+  <ng-template
+    #divApiClients
+    class="animate__animated animate__fadeIn animate__faster"
+  >
+    <main class="py-6 bg-surface-secondary">
+      <div class="container-fluid">
+        <!-- <app-filter-box
+          [isBtnVisible]="true"
+          [printValue]="openModal(template, undefined)"
+          placeholder="Buscar permiso..."
+        ></app-filter-box> -->
+        <div class="row">
+          <div class="col">
+            <a
+              class="btn btn-primary btn-lg active mcard wallet"
+              role="button"
+              aria-pressed="true"
+              kunTooltip="Crear un nuevo Cliente API"
+              kunTooltipPlacement="top"
+              (click)="openModal(template, undefined)"
+              ><mat-icon>add</mat-icon></a
+            >
+          </div>
+          <div class="col">
+            <!-- <div class="form-group">
+              <input
+                type="text"
+                class="form-control form-control-placeholdericon"
+                id="search-text"
+                aria-describedby="search-text"
+                [(ngModel)]="searchText"
+                placeholder="Buscar cliente api..."
+                autofocus
+              />
+            </div> -->
+            <app-filter-box
+              [isBtnVisible]="false"
+              placeholder="Buscar cliente API..."
+              (onKeyUp)="keyupHandler($event)"
+            ></app-filter-box>
+          </div>
+        </div>
+        <hr />
+        <ng-container *ngIf="ApiClientList?.length == 0; else elseTemplate">
+          <app-no-data-found item="Cliente API"></app-no-data-found>
+        </ng-container>
+        <ng-template #elseTemplate>
+          <div class="card shadow border-0 mb-7">
+            <div class="card-header">
+              <h5 class="mb-0">Listado</h5>
+            </div>
+            <!-- Listado de Clientes API -->
+            <app-mat-reusable-table
+              [tableData]="this.ApiClientList"
+              [tableColumns]="this.clientesApiTableColumns"
+              [isFilterable]="true"
+              [isPageable]="true"
+              [paginationSizes]="[2, 4, 6, 8, 10]"
+              [defaultPageSize]="8"
+              [filter]="searchText"
+              itemsPerPageLabel="Clientes API por página:"
+              [rowActionIcon]="'remove_shopping_cart'"
+              [BasicIcon]="true"
+              [AsignPermisosIcon]="true"
+              (deleteAction)="deletedItem($event)"
+              (editAction)="openModal(template, $event)"
+              (permisosAsignAction)="asignPemisOpenModal(asignTemplate, $event)"
+            ></app-mat-reusable-table>
+            <div class="card-footer border-0 py-5">
+              <!-- <span class="text-muted text-sm"
+            >Showing 10 items out of 250 results found</span
+          > -->
+            </div>
+          </div>
+        </ng-template>
+        <ng-template #loading>
+          <mat-progress-spinner
+            color="primary"
+            mode="indeterminate"
+            strokeWidth="0"
+            diameter="50"
+          >
+          </mat-progress-spinner>
+        </ng-template>
+      </div>
+    </main>
+  </ng-template>
+
+  <ng-template #template>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        <i class="bx bx-laptop icon"></i>
+        {{
+          form.value.id !== null
+            ? "Modificar cliente api"
+            : "Adicionar cliente api"
+        }}
+      </h4>
+
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form" (ngSubmit)="SaveChages()">
+        <!-- Id field -->
+        <div class="form-group row">
+          <label
+            for="inputEmail33"
+            [ngClass]="
+              form.value.id
+                ? 'col-sm-4 col-form-label required visible'
+                : 'col-sm-4 col-form-label required hidden'
+            "
+            >Id:</label
+          >
+          <div
+            class="col-sm-8"
+            [ngClass]="form.value.id ? 'visible' : 'hidden'"
+          >
+            <input
+              type="text"
+              title="Identificador"
+              placeholder="Identificador"
+              name="identificador"
+              formControlName="identificador"
+              class="form-control my-2"
+            />
+          </div>
+          <!-- <div
+            *ngIf="
+              form.controls['identificador'].invalid &&
+              (form.controls['identificador'].dirty ||
+                form.controls['identificador'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div [innerHTML]="idFieldErrorMsg"></div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Fecha alta -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-4 col-form-label required"
+            >Fecha de alta:</label
+          >
+
+          <div class="col-sm-8">
+            <input
+              type="date"
+              title="Fecha de alta"
+              placeholder="Fecha de alta"
+              (keydown)="$event.preventDefault()"
+              (keyup)="$event.preventDefault()"
+              (ngModelChange)="valuechange($event)"
+              formControlName="fechaAlta"
+              [min]="currentDate"
+              dateFormat="dd/MM/yyyy"
+              class="form-control my-2"
+              [class.is-invalid]="
+                form.controls['fechaAlta'].invalid &&
+                (form.controls['fechaAlta'].dirty ||
+                  form.controls['fechaAlta'].touched)
+              "
+            />
+            <!-- <code> <b>Control Value: </b>{{ date!.value }} </code> -->
+          </div>
+          <!-- Working! -->
+          <div
+            *ngIf="
+              form.controls['fechaAlta'].invalid &&
+              (form.controls['fechaAlta'].dirty ||
+                form.controls['fechaAlta'].touched)
+            "
+            class="alert"
+          >
+            <!-- Invalid date validation message -->
+            <div *ngIf="form.controls['fechaAlta'].errors">
+              <div
+                class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+                role="alert"
+              >
+                <i class="bx bxs-error-circle"></i>
+                {{ form.controls["fechaAlta"].errors["invalidDate"] }}
+              </div>
+            </div>
+            <br />
+            <!-- Required validation message -->
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Seleccione una fecha de alta válida</div>
+            </div>
+          </div>
+        </div>
+        <!-- Fecha baja -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-4 col-form-label required"
+            >Fecha de baja:</label
+          >
+          <div class="col-sm-8">
+            <input
+              type="date"
+              title="Fecha de baja"
+              placeholder="Fecha de baja"
+              (keydown)="$event.preventDefault()"
+              (keyup)="$event.preventDefault()"
+              [min]="fechaBajaLimite"
+              formControlName="fechaBaja"
+              class="form-control my-2"
+              [class.is-invalid]="
+                form.controls['fechaBaja'].invalid &&
+                (form.controls['fechaBaja'].dirty ||
+                  form.controls['fechaBaja'].touched)
+              "
+            />
+          </div>
+          <div
+            *ngIf="
+              form.controls['fechaBaja'].invalid &&
+              (form.controls['fechaBaja'].dirty ||
+                form.controls['fechaBaja'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>
+                Seleccione una fecha de baja válida, tenga en cuenta que debe
+                ser mayor/igual que la fecha de alta
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Nombre -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-4 col-form-label required"
+            >Nombre:</label
+          >
+          <div class="col-sm-8">
+            <input
+              type="text"
+              title="Nombre"
+              placeholder="Nombre"
+              formControlName="nombre"
+              class="form-control my-2"
+              [class.is-invalid]="
+                form.controls['nombre'].invalid &&
+                (form.controls['nombre'].dirty ||
+                  form.controls['nombre'].touched)
+              "
+            />
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="nombre"
+            msgRequired="El campo Nombre es requerido."
+            msgPattern="Valor no permitido para este campo."
+          ></app-validation-messages>
+        </div>
+        <!-- Observaciones -->
+        <div class="form-group row">
+          <label for="inputEmail33" class="col-sm-4 col-form-label required"
+            >Observaciones:</label
+          >
+          <div class="col-sm-8">
+            <textarea
+              title="descripcion"
+              class="form-control my-2"
+              placeholder="Observaciones"
+              formControlName="descripcion"
+              [class.is-invalid]="
+                form.controls['descripcion'].invalid &&
+                (form.controls['descripcion'].dirty ||
+                  form.controls['descripcion'].touched)
+              "
+            >
+            </textarea>
+          </div>
+          <app-validation-messages
+            [form]="form"
+            fieldToValidate="descripcion"
+            msgRequired="El campo Observaciones es requerido."
+            msgPattern="Valor no permitido para este campo."
+          ></app-validation-messages>
+          <!-- <div
+            *ngIf="
+              form.controls['descripcion'].invalid &&
+              (form.controls['descripcion'].dirty ||
+                form.controls['descripcion'].touched)
+            "
+            class="alert"
+          >
+            <div
+              class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+              role="alert"
+            >
+              <i class="bx bxs-error-circle"></i>
+              <div>Especifique una descripción</div>
+            </div>
+          </div> -->
+        </div>
+        <!-- Activo field -->
+        <div class="form-check">
+          <div class="col-sm-1">
+            <input
+              type="checkbox"
+              (change)="onNativeChange($event)"
+              [checked]="isChecked"
+              class="form-check-input"
+              id="estado"
+              formControlName="estado"
+            />
+          </div>
+          <label for="inputEmail33" class="col-sm-12 form-check-label"
+            >Activo?</label
+          >
+        </div>
+        <br />
+
+        <button
+          title="Salvar datos"
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="form.invalid"
+        >
+          <!-- <img src="../../../../assets/icons/save-44-32.png" alt="" /> -->
+          Salvar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #token>
+    <div class="modal-header">Hola</div>
+    <div class="modal-body">
+      <div class="card-header">Quote</div>
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
+              posuere erat a ante.
+            </p>
+            <footer class="blockquote-footer">
+              Someone famous in <cite title="Source Title">Source Title</cite>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #asignTemplate>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">
+        <i class="bx bx-pie-chart-alt icon"></i> 
+      </h4>
+  
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="save()">
+        <div class="form-group row">
+          <label for="asignPermissionLabel" class="col-sm-5 col-form-label"
+            >Asignar permisos:</label
+          >
+          <div class="col-sm-7">
+            <ng-multiselect-dropdown name="dropdownAsignPermission"
+              [placeholder]="'Permisos disponibles'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedItemsModel"
+              (onSelect)="onItemSelect($event)"
+              (onDeSelect)="onItemDeSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+              (onDeSelectAll)="onItemDeSelectAll($event)"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+        <br />
+        <button
+          title="Salvar datos"
+          class="btn btn-primary"
+          type="submit"
+        >
+
+          Salvar
+        </button>
+      </form>
+    </div>
+  </ng-template>
+</div>

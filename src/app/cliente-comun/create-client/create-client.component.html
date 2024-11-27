@@ -1,0 +1,351 @@
+<body>
+	<div class="container-full" style="background: #2c43a1; height: auto !important;">
+		<div class="container">
+			<div class="row">
+
+				<mat-card style="margin-top: 80px;">
+					<mat-card-title>
+						<span><img src="assets/images/logo/Logo.jpeg" class="avatar mt-4" /></span>
+						<span class="only-text">Registrar cliente</span>
+					</mat-card-title>
+					<!--<form [formGroup]="registerForm" #formDirective="ngForm" 
+  (ngSubmit)="onSubmit(registerForm, formDirective)">
+				<mat-form-field>
+					<mat-icon matPrefix>email</mat-icon>
+					<input autofocus type="email" matInput placeholder="Email *" formControlName="email">
+					<mat-error *ngIf="checkValidation('email')">
+						{{ emaiErrors() }}
+          
+					</mat-error>
+				</mat-form-field>
+
+
+				<mat-form-field>
+					<mat-icon matPrefix>person_outline</mat-icon>
+					<input autofocus type="text" matInput placeholder="Username *" formControlName="username">
+					<mat-error *ngIf="checkValidation('username')">
+						{{ fieldRequired }}
+					</mat-error>
+				</mat-form-field>
+
+
+				<mat-form-field>
+					<mat-icon matPrefix>lock_outline</mat-icon>
+					<input type="password" autocomplete="false" matInput placeholder="Password *" formControlName="password">
+          <mat-hint>Choose a password of at least eight characters, one uppercase letter and one number</mat-hint>
+      <mat-error *ngIf="checkValidation('password')">
+        {{ getErrorPassword() }}
+      </mat-error>
+				</mat-form-field>
+				
+  <hr>
+			<div class="socialMediaFlex">
+        	<button style="width:50%" [disabled]="registerForm.invalid"    type="submit" mat-raised-button color="primary">Submit</button>
+      </div>-->
+					<form *ngIf="componentForm" [formGroup]="componentForm" (ngSubmit)="SaveChages()">
+
+						<div class="container">
+							<div class="row">
+								<div class="row">
+									<div class="form-group row">
+
+										<div class="col-md-3">
+											<label for="inputEmail3"
+												class="col-sm-6 col-form-label required">Nombre:</label>
+
+											<input type="text" title="Nombre" placeholder="Nombre"
+												formControlName="name" (keyup)="checkNombreAvailability($event)"
+												[class.is-invalid]="
+                            componentForm.controls['name'].invalid &&
+                            (componentForm.controls['name'].dirty ||
+                              componentForm.controls['name'].touched)" class="form-control my-2" />
+											<app-validation-messages [form]="componentForm" fieldToValidate="name"
+												msgRequired="El campo Nombre es requerido."
+												msgPattern="Valor no permitido para este campo."
+												[msgIncorrect]="this.nombreFieldErrorMsg"></app-validation-messages>
+										</div>
+
+
+										<!--<div class="col-md-3">
+											<label for="inputEmail3" class="col-sm-6 col-form-label required">Nombre
+												Corto:</label>
+
+											<input type="text"
+												title="Nombre" placeholder="Nombre Corto"
+												(keyup)="checkNombreCortoAvailability($event)"
+												formControlName="nameCorto" class="form-control my-2"
+												[class.is-invalid]="
+                            componentForm.controls['nameCorto'].invalid &&
+                            (componentForm.controls['nameCorto'].dirty ||
+                              componentForm.controls['nameCorto'].touched)
+                          " />
+
+											<app-validation-messages [form]="componentForm" fieldToValidate="nameCorto"
+												msgRequired="El campo Nombre Corto es requerido."
+												msgPattern="Valor no permitido para este campo."
+												[msgIncorrect]="this.nombreCortoFieldErrorMsg"></app-validation-messages>
+
+										</div>-->
+
+										<div class="col-md-3">
+											<label for="inputEmail3"
+												class="col-sm-6 col-form-label required">Apellidos:</label>
+
+											<input type="text" title="Apellidos" placeholder="Apellidos"
+												formControlName="lastName" class="form-control my-2" [class.is-invalid]="
+                            componentForm.controls['lastName'].invalid &&
+                            (componentForm.controls['lastName'].dirty ||
+                              componentForm.controls['lastName'].touched)
+                          " />
+
+											<app-validation-messages [form]="componentForm" fieldToValidate="lastName"
+												msgRequired="El campo Apellidos es requerido."
+												msgPattern="Valor no permitido para este campo."></app-validation-messages>
+
+										</div>
+
+										<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">Correo:</label>
+
+											<input type="text" title="Email" placeholder="Correo"
+												(keyup)="checkEmailAvailability($event)" formControlName="email"
+												class="form-control my-2" [class.is-invalid]="
+                            componentForm.controls['email'].invalid &&
+                            (componentForm.controls['email'].dirty ||
+                              componentForm.controls['email'].touched)
+                          " />
+
+											<app-validation-messages [form]="componentForm" fieldToValidate="email"
+												msgRequired="El campo Correo Electrónico es requerido."
+												msgPattern="Valor no permitido para este campo."
+												msgMinLength="Este campo debe tener un mínimo de 8 caracteres"></app-validation-messages>
+										</div>
+
+										<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">CI/Pasaporte:</label>
+
+											<input type="text" title="ci" placeholder="CI/Pasaporte"
+												(keyup)="checkCIAvailability($event)" formControlName="ci"
+												[class.is-invalid]="
+							  componentForm.controls['ci'].invalid &&
+							  (componentForm.controls['ci'].dirty ||
+								componentForm.controls['ci'].touched)
+							" class="form-control" />
+
+											<app-validation-messages [form]="componentForm" fieldToValidate="ci"
+												msgRequired="El campo Carnet Identidad es requerido."
+												msgPattern="Valor no permitido para este campo."
+												msgMinLength="Este campo debe tener mínimo 11 caracteres"></app-validation-messages>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+
+									<div class="col-md-3">
+										<label for="labelUsername"
+											class="col-sm-6 col-form-label required">Usuario:</label>
+
+										<input type="text" formControlName="username" class="form-control" />
+
+									</div>
+
+									<div class="col-md-3">
+										<label for="labelPassword"
+											class="col-sm-6 col-form-label required">Contraseña:</label>
+										<input [ngClass]="{
+											'is-invalid':
+											  (password?.invalid && password?.touched) ||
+											  password?.hasError('notwhiteSpaces'),
+											'is-valid': password?.valid
+										  }" formControlName="password" type="password" class="form-control" id="password" placeholder="Clave" />
+
+										<app-validation-messages [form]="componentForm" fieldToValidate="password"
+											msgRequired="La clave es obligatoria.">
+										</app-validation-messages>
+
+										<div *ngIf="password?.hasError('notwhiteSpaces')"
+											class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+											role="alert">
+											<i class="bx bxs-error-circle"></i>
+											<div>La clave no debe tener espacios en blanco.</div>
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<label for="labelConfirmPassword" class="col-form-label required">Confirmar
+											contraseña:</label>
+										<input [ngClass]="{
+											'is-invalid':
+											  (confirmpassword?.invalid && confirmpassword?.touched) ||
+											  password?.hasError('notwhiteSpaces'),
+											'is-valid': confirmpassword?.valid
+										  }" formControlName="confirmpassword" type="password" class="form-control" id="confirmpassword"
+											placeholder="Confirmar clave" />
+										<app-validation-messages [form]="componentForm"
+											fieldToValidate="confirmpassword" msgRequired="La clave es obligatoria.">
+										</app-validation-messages>
+
+										<div *ngIf="confirmpassword?.hasError('notwhiteSpaces')"
+											class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+											role="alert">
+											<i class="bx bxs-error-circle"></i>
+											<div>La clave no debe tener espacios en blanco.</div>
+										</div>
+									</div>
+
+									<div class="col-md-3">
+										<label for="inputEmail33"
+											class="col-sm-6 col-form-label required">Dirección:</label>
+
+										<textarea title="direccion" class="form-control" placeholder="Direción"
+											formControlName="address" [class.is-invalid]="
+                          componentForm.controls['address'].invalid &&
+                          (componentForm.controls['address'].dirty ||
+                            componentForm.controls['address'].touched)
+                        ">
+                      </textarea>
+										<app-validation-messages [form]="componentForm" fieldToValidate="address"
+											msgRequired="El campo Dirección es requerido."
+											msgPattern="Valor no permitido para este campo."></app-validation-messages>
+									</div>
+
+
+								</div>
+
+								<div class="row">
+									<div class="form-group row">
+										<!--<div class="col-md-3">
+											<label for="inputEmail33" class="col-sm-6 col-form-label required">Código:</label>
+	
+											<input type="text" title="ci"
+												placeholder="Código REEUP" (keyup)="checkCodigoAvailability($event)"
+												formControlName="codigo" class="form-control" [class.is-invalid]="
+							  componentForm.controls['codigo'].invalid &&
+							  (componentForm.controls['codigo'].dirty ||
+								componentForm.controls['codigo'].touched)
+							" />
+	
+											<app-validation-messages [form]="componentForm" fieldToValidate="codigo"
+												msgRequired="El campo Código es requerido."
+												msgPattern="Valor no permitido para este campo."
+												msgMinLength="Este campo debe tener un mínimo de 4 caracteres"
+												[msgIncorrect]="this.codigoFieldErrorMsg"></app-validation-messages>
+	
+										</div>-->
+										<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">Teléfono:</label>
+
+											<input type="text" title="telefono" placeholder="Teléfono"
+												formControlName="contactPhone"
+												(keyup)="checkTelefonoAvailability($event)" class="form-control my-2"
+												[class.is-invalid]="
+                            componentForm.controls['contactPhone'].invalid &&
+                            (componentForm.controls['contactPhone'].dirty ||
+                              componentForm.controls['contactPhone'].touched)
+                          " />
+
+											<app-validation-messages [form]="componentForm"
+												fieldToValidate="contactPhone"
+												msgRequired="El campo Teléfono es requerido."
+												msgPattern="Valor no permitido para este campo."
+												msgMinLength="Esta campo debe tener 8 caracteres"></app-validation-messages>
+
+										</div>
+
+										<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">País:</label>
+
+											<select placeholder="Country" class="form-select my-2"
+												formControlName="pais" [(ngModel)]="selectedCountry"
+												(change)="onPaisSelected($event)" [class.is-invalid]="
+                            componentForm.controls['pais'].invalid &&
+                            (componentForm.controls['pais'].dirty ||
+                              componentForm.controls['pais'].touched)
+                          ">
+												<option disabled="true">Paises</option>
+												<option *ngFor="let country of Countries"
+													[selected]="country.name === selectedCountry">
+													{{ country.name }}
+												</option>
+											</select>
+
+											<div *ngIf="
+                            componentForm.controls['pais'].invalid &&
+                            (componentForm.controls['pais'].dirty ||
+                              componentForm.controls['pais'].touched)
+                          " class="alert">
+												<div class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+													role="alert">
+													<i class="bx bxs-error-circle"></i>
+													<div>País requerido</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">Provincia:</label>
+
+											<select placeholder="Provincia" [(ngModel)]="selectedProvince"
+												formControlName="province" class="form-select my-2" [class.is-invalid]="
+                            componentForm.controls['province'].invalid &&
+                            (componentForm.controls['province'].dirty ||
+                              componentForm.controls['province'].touched)
+                          " [disabled]="true">
+												<option disabled="true">Provincias/Estados</option>
+												<option *ngFor="let state of states"
+													[selected]="state.name === selectedProvince">
+													{{ state.name }}
+												</option>
+											</select>
+
+											<div *ngIf="
+                            componentForm.controls['province'].invalid &&
+                            (componentForm.controls['province'].dirty ||
+                              componentForm.controls['province'].touched)
+                          " class="alert">
+												<div class="animate__animated animate__fadeIn animate__faster alert alert-danger d-flex align-items-center"
+													role="alert">
+													<i class="bx bxs-error-circle"></i>
+													<div>Provincia requerido</div>
+												</div>
+											</div>
+										</div>
+
+										<!--<div class="col-md-3">
+											<label for="inputEmail33"
+												class="col-sm-6 col-form-label required">Descripción:</label>
+
+											<textarea title="descripcion" class="form-control my-2"
+												placeholder="Descripción" formControlName="description"
+												[class.is-invalid]="
+                            componentForm.controls['description'].invalid &&
+                            (componentForm.controls['description'].dirty ||
+                              componentForm.controls['description'].touched)">
+                        </textarea>
+
+											<app-validation-messages [form]="componentForm"
+												fieldToValidate="description"
+												msgRequired="El campo Descripción requerido."
+												msgPattern="Valor no permitido para este campo."></app-validation-messages>
+
+										</div>-->
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<button title="Salvar datos" class="btn btn-primary" type="submit">
+							Salvar
+						</button>
+					</form>
+				</mat-card>
+			</div>
+		</div>
+	</div>
+</body>
